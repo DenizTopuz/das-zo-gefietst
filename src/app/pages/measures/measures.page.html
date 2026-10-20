@@ -1,0 +1,55 @@
+<div class="page">
+  <app-page-header title="Verkeersmaatregelen" subtitle="Matrixborden en actieve maatregelen"></app-page-header>
+
+  @if (offline().length) {
+    <ndw-alert type="warning" class="alert">{{ offline().length }} matrixbord(en) zijn offline en tonen geen actuele informatie.</ndw-alert>
+  }
+
+  <ndw-tab-group [(activeTabId)]="activeTab">
+    <ndw-tab title="Matrixborden" id="borden" icon="signpost">
+      <div class="ndw-grid tab">
+        <div class="column-6 column-sm-3 column-md-5 signs">
+          @for (sign of data.matrixSigns(); track sign.id) {
+            <article class="sign-card">
+              <div class="sign" [class.sign--x]="sign.display === 'X'" [class.sign--off]="!sign.online" [attr.aria-label]="'Bord toont ' + sign.display">
+                <span>{{ signLabel(sign.display) }}</span>
+              </div>
+              <div>
+                <div class="ndw-paragraph-bold-md">{{ sign.road }} hm {{ sign.hectometer }}</div>
+                <ndw-pill [color]="sign.online ? 'green' : 'red'">{{ sign.online ? 'Online' : 'Offline' }}</ndw-pill>
+              </div>
+            </article>
+          }
+        </div>
+        <div class="column-6 column-sm-3 column-md-7 map">
+          <app-ndw-map [features]="features()" [kinds]="['matrix']" [showLegend]="false"></app-ndw-map>
+        </div>
+      </div>
+    </ndw-tab>
+
+    <ndw-tab title="Maatregelen" id="maatregelen" icon="rule">
+      <div class="ndw-grid tab">
+        @for (measure of data.measures(); track measure.id) {
+          <ndw-card class="column-6 column-sm-3 column-md-4">
+            <ndw-card-header>{{ measure.name }}</ndw-card-header>
+            <ndw-card-content>
+              <div class="pills">
+                <ndw-pill color="purple">{{ measure.type }}</ndw-pill>
+                @for (road of measure.roads; track road) {
+                  <ndw-pill color="gray">{{ road }}</ndw-pill>
+                }
+              </div>
+              <p class="ndw-paragraph-md">{{ measure.description }}</p>
+              <ndw-checkbox [switch]="true" [checked]="measure.active" (checkedChange)="toggle(measure.id, $event)">
+                {{ measure.active ? 'Actief' : 'Inactief' }}
+              </ndw-checkbox>
+              @if (measure.since) {
+                <p class="ndw-paragraph-sm">Sinds {{ measure.since | date: 'HH:mm' }} door {{ measure.activatedBy }}</p>
+              }
+            </ndw-card-content>
+          </ndw-card>
+        }
+      </div>
+    </ndw-tab>
+  </ndw-tab-group>
+</div>

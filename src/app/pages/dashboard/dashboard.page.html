@@ -1,0 +1,87 @@
+<div class="page">
+  <app-page-header title="Verkeersdashboard" subtitle="Actueel overzicht van verkeer en wegwerkzaamheden">
+    <a ndwButton secondary routerLink="/kaart"><ndw-icon>map</ndw-icon> Open verkeerskaart</a>
+  </app-page-header>
+
+  <section class="ndw-grid kpis" aria-label="Kerncijfers">
+    @for (kpi of kpis(); track kpi.label) {
+      <ndw-card class="column-6 column-sm-3">
+        <ndw-card-content>
+          <div class="kpi">
+            <ndw-icon>{{ kpi.icon }}</ndw-icon>
+            <div>
+              <div class="ndw-paragraph-md">{{ kpi.label }}</div>
+              <div class="ndw-heading-md">{{ kpi.value }}</div>
+              <div class="ndw-paragraph-sm">{{ kpi.hint }}</div>
+            </div>
+          </div>
+        </ndw-card-content>
+      </ndw-card>
+    }
+  </section>
+
+  <div class="ndw-grid main">
+    <ndw-card class="column-6 column-sm-6 column-md-8 map-card">
+      <ndw-card-header>Actuele verkeerssituatie</ndw-card-header>
+      <ndw-card-content>
+        <div class="map-wrap">
+          <app-ndw-map [features]="features()" [kinds]="['incident', 'jam']" (featureSelected)="openIncident($event)"></app-ndw-map>
+        </div>
+      </ndw-card-content>
+    </ndw-card>
+
+    <ndw-card class="column-6 column-sm-6 column-md-4">
+      <ndw-card-header>Laatste incidenten</ndw-card-header>
+      <ndw-card-content>
+        <ndw-list>
+          @for (incident of latestIncidents(); track incident.id) {
+            <ndw-list-item
+              [title]="incident.type + ' · ' + incident.road"
+              [subtitle]="incident.location + ' · ' + minutesAgo(incident.startedAt)"
+              prefixIcon="warning"
+              [pillLabel]="incident.severity"
+              [pillColor]="severityColor[incident.severity]"
+              (click)="openIncident(incident.id)"
+            ></ndw-list-item>
+          }
+        </ndw-list>
+      </ndw-card-content>
+    </ndw-card>
+
+    <ndw-card class="column-6 column-sm-3 column-md-4">
+      <ndw-card-header>Incidenten afgelopen week</ndw-card-header>
+      <ndw-card-content>
+        <ul class="bars" aria-label="Aantal incidenten per dag">
+          @for (day of daily; track day.day) {
+            <li class="bar">
+              <span class="ndw-paragraph-md bar__day">{{ day.day }}</span>
+              <progress class="bar__fill" [max]="dailyMax" [value]="day.value" [attr.aria-label]="day.value + ' incidenten'"></progress>
+              <span class="ndw-paragraph-bold-md">{{ day.value }}</span>
+            </li>
+          }
+        </ul>
+      </ndw-card-content>
+    </ndw-card>
+
+    <ndw-card class="column-6 column-sm-3 column-md-8">
+      <ndw-card-header>Aankomende en actieve wegwerkzaamheden</ndw-card-header>
+      <ndw-card-content>
+        <table class="table">
+          <thead>
+            <tr><th scope="col">Werkzaamheid</th><th scope="col">Weg</th><th scope="col">Periode</th><th scope="col">Hinder</th></tr>
+          </thead>
+          <tbody>
+            @for (work of upcomingRoadworks(); track work.id) {
+              <tr>
+                <td><a ndwLink [routerLink]="['/wegwerkzaamheden', work.id]">{{ work.title }}</a></td>
+                <td>{{ work.road }}</td>
+                <td>{{ work.start | date: 'dd-MM' }} t/m {{ work.end | date: 'dd-MM' }}</td>
+                <td><ndw-pill [color]="impactColor[work.impact]">{{ work.impact }}</ndw-pill></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </ndw-card-content>
+    </ndw-card>
+  </div>
+</div>

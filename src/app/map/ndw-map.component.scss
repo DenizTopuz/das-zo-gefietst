@@ -1,0 +1,31 @@
+:host {
+  display: block;
+  position: relative;
+  min-height: 320px;
+  height: 100%;
+  border-radius: var(--ndw-border-radius-md);
+  overflow: hidden;
+}
+
+.map {
+  position: absolute;
+  inset: 0;
+}
+
+.controls {
+  position: absolute;
+  display: flex;
+  gap: var(--ndw-spacing-xs);
+  z-index: 1;
+
+  &--top-right {
+    top: var(--ndw-spacing-md);
+    right: var(--ndw-spacing-md);
+  }
+
+  &--bottom-right {
+    bottom: var(--ndw-spacing-lg);
+    right: var(--ndw-spacing-md);
+    flex-direction: column;
+  }
+}

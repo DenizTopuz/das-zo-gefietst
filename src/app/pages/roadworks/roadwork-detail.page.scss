@@ -1,0 +1,22 @@
+.page {
+  padding: var(--ndw-spacing-lg);
+}
+
+.ndw-grid {
+  padding: 0;
+}
+
+.alert {
+  display: block;
+  margin-bottom: var(--ndw-spacing-md);
+}
+
+.pills {
+  display: flex;
+  gap: var(--ndw-spacing-xs);
+  margin-bottom: var(--ndw-spacing-sm);
+}
+
+.map {
+  height: 560px;
+}

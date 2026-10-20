@@ -1,0 +1,36 @@
+<div class="full">
+  <app-ndw-map [features]="features()" [selectedId]="selectedId()" (featureSelected)="selectedId.set($event)"></app-ndw-map>
+
+  <ndw-card class="panel">
+    <ndw-card-header>Verkeerskaart</ndw-card-header>
+    <ndw-card-content>
+      @if (incident(); as i) {
+        <h2 class="ndw-heading-sm">{{ i.type }} {{ i.road }}</h2>
+        <ndw-pill [color]="severityColor[i.severity]">Ernst {{ i.severity }}</ndw-pill>
+        <p class="ndw-paragraph-md">{{ i.description }}</p>
+        <a ndwButton secondary extra-small routerLink="/incidenten" [queryParams]="{ id: i.id }">Bekijk incident</a>
+      } @else if (roadwork(); as w) {
+        <h2 class="ndw-heading-sm">{{ w.title }}</h2>
+        <ndw-pill [color]="impactColor[w.impact]">{{ w.impact }}</ndw-pill>
+        <p class="ndw-paragraph-md">{{ w.description }}</p>
+        <a ndwButton secondary extra-small [routerLink]="['/wegwerkzaamheden', w.id]">Bekijk werkzaamheid</a>
+      } @else if (jam(); as j) {
+        <h2 class="ndw-heading-sm">File {{ j.road }} richting {{ j.direction }}</h2>
+        <p class="ndw-paragraph-md">{{ j.lengthKm }} km · {{ j.delayMinutes }} min vertraging · oorzaak: {{ j.cause }}</p>
+      } @else if (sign(); as s) {
+        <h2 class="ndw-heading-sm">Matrixbord {{ s.road }} {{ s.hectometer }}</h2>
+        <p class="ndw-paragraph-md">Toont: {{ s.display }} · {{ s.online ? 'online' : 'offline' }}</p>
+      } @else {
+        <p class="ndw-paragraph-md">Selecteer een object op de kaart voor details.</p>
+        <ndw-key-value-list
+          [data]="[
+            { key: 'Open incidenten', value: '' + data.openIncidents().length },
+            { key: 'Files', value: '' + data.jams().length },
+            { key: 'Actieve werkzaamheden', value: '' + data.activeRoadworks().length },
+            { key: 'Matrixborden', value: '' + data.matrixSigns().length },
+          ]"
+        ></ndw-key-value-list>
+      }
+    </ndw-card-content>
+  </ndw-card>
+</div>

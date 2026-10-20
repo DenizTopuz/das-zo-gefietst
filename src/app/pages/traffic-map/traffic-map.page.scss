@@ -1,0 +1,21 @@
+.full {
+  position: relative;
+  height: 100vh;
+
+  app-ndw-map {
+    border-radius: 0;
+  }
+}
+
+.panel {
+  position: absolute;
+  top: var(--ndw-spacing-md);
+  left: var(--ndw-spacing-md);
+  width: 340px;
+  max-width: calc(100% - 2 * var(--ndw-spacing-md));
+  z-index: 2;
+
+  h2 {
+    margin: 0 0 var(--ndw-spacing-xs);
+  }
+}

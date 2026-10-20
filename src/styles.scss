@@ -1,0 +1,11 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  font-family: var(--ndw-font-family-body);
+  color: var(--ndw-color-text);
+  background: var(--ndw-color-grey-50);
+}
