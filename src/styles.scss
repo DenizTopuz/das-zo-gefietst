@@ -33,7 +33,7 @@ ndw-main-navigation-menu [ndwButton]:focus-visible,
   border-radius: var(--ndw-border-radius-md);
 }
 
-// CC-034: left-align the menu footer texts and version, in line with the menu icons (24px). The
+// CC-034/CC-035: left-align the menu footer texts and version (lighter grey, 5.6:1 on white), in line with the menu icons (24px). The
 // design system's encapsulated selectors (`.content[_ngcontent] footer[_ngcontent] .texts[_ngcontent] p`)
 // out-rank any normal global selector, hence `!important`. Remove when the DS aligns these left.
 ndw-main-navigation.expanded footer {
@@ -41,11 +41,13 @@ ndw-main-navigation.expanded footer {
     padding-inline: var(--ndw-spacing-lg) !important;
 
     p {
+      color: var(--ndw-color-grey-500) !important;
       text-align: left !important;
     }
   }
 
   .version p {
+    color: var(--ndw-color-grey-500) !important;
     text-align: left !important;
     padding-inline-start: var(--ndw-spacing-lg) !important;
   }

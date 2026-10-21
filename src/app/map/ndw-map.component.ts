@@ -32,22 +32,22 @@ const BACKGROUNDS: MapBackgroundOption<BackgroundStyle>[] = [
   template: `
     <div #mapContainer class="map" role="application" aria-label="Verkeerskaart"></div>
 
-    <div class="controls controls--top-right">
+    <div class="controls">
+      @if (showLegend()) {
+        <ndw-map-legend [groups]="legend()"></ndw-map-legend>
+      }
       <ndw-map-display
         [backgroundOptions]="backgrounds"
         [layerOptions]="layerOptions()"
         (backgroundChange)="onBackgroundChange($event)"
         (layerChange)="onLayerChange($event)"
       ></ndw-map-display>
-      @if (showLegend()) {
-        <ndw-map-legend [groups]="legend()"></ndw-map-legend>
-      }
-    </div>
 
-    <div class="controls controls--bottom-right">
-      <ndw-map-button icon="zoom-to-content" ariaLabel="Zoom naar alle data" (clicked)="fitToData()"></ndw-map-button>
-      <ndw-map-button icon="zoom-in" ariaLabel="Inzoomen" (clicked)="map.zoomIn()"></ndw-map-button>
-      <ndw-map-button icon="zoom-out" ariaLabel="Uitzoomen" (clicked)="map.zoomOut()"></ndw-map-button>
+      <div class="zoom">
+        <ndw-map-button icon="zoom-to-content" ariaLabel="Zoom naar alle data" (clicked)="fitToData()"></ndw-map-button>
+        <ndw-map-button icon="zoom-in" ariaLabel="Inzoomen" (clicked)="map.zoomIn()"></ndw-map-button>
+        <ndw-map-button icon="zoom-out" ariaLabel="Uitzoomen" (clicked)="map.zoomOut()"></ndw-map-button>
+      </div>
     </div>
   `,
   styleUrl: './ndw-map.component.scss',

@@ -14,18 +14,16 @@
 
 .controls {
   position: absolute;
-  display: flex;
-  gap: var(--ndw-spacing-xs);
+  right: var(--ndw-spacing-md);
+  bottom: var(--ndw-spacing-lg);
   z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--ndw-spacing-xs);
+}
 
-  &--top-right {
-    top: var(--ndw-spacing-md);
-    right: var(--ndw-spacing-md);
-  }
-
-  &--bottom-right {
-    bottom: var(--ndw-spacing-lg);
-    right: var(--ndw-spacing-md);
-    flex-direction: column;
-  }
+.zoom {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ndw-spacing-xs);
 }
