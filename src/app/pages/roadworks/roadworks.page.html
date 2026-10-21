@@ -14,7 +14,7 @@
   </div>
 
   @if (view() === 'tabel') {
-    <ag-grid-angular class="grid" [theme]="theme" [columnDefs]="columns" [rowData]="rows()" [autoSizeStrategy]="autoSize" domLayout="autoHeight" (rowClicked)="openDetail($event)" />
+    <ag-grid-angular class="grid" [theme]="theme" [columnDefs]="columns" [rowData]="rows()" [autoSizeStrategy]="autoSize" domLayout="autoHeight" (rowClicked)="openDetail($event)" (cellKeyDown)="openOnEnter($event)" />
   } @else {
     <div class="map">
       <app-ndw-map [features]="features()" [kinds]="['roadwork']" [showLegend]="false" (featureSelected)="openById($event)"></app-ndw-map>

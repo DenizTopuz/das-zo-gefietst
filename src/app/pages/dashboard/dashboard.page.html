@@ -42,6 +42,10 @@
               [pillLabel]="incident.severity"
               [pillColor]="severityColor[incident.severity]"
               (click)="openIncident(incident.id)"
+            [showButton]="true"
+            buttonIcon="visibility"
+            buttonLabel="Toon incident"
+            (buttonClicked)="openIncident(incident.id)"
             ></ndw-list-item>
           }
         </ndw-list>

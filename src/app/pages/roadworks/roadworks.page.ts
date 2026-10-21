@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AgGridAngular } from 'ag-grid-angular';
-import { AllCommunityModule, ColDef, ModuleRegistry, RowClickedEvent, themeQuartz, ValueFormatterParams } from 'ag-grid-community';
+import { AllCommunityModule, CellKeyDownEvent, ColDef, FullWidthCellKeyDownEvent, ModuleRegistry, RowClickedEvent, themeQuartz, ValueFormatterParams } from 'ag-grid-community';
 import { FormFieldComponent, IconComponent, InputDirective, InputIconComponent, ndwAgGridTheme, SwitcherComponent, SwitcherOption } from '@ndwnu/design-system';
 import { Roadwork } from '../../data/models';
 import { TrafficDataService } from '../../data/traffic-data.service';
@@ -69,6 +69,10 @@ export class RoadworksPage {
 
   protected openDetail(event: RowClickedEvent<Roadwork>) {
     if (event.data) this.#router.navigate(['/wegwerkzaamheden', event.data.id]);
+  }
+
+  protected openOnEnter(event: CellKeyDownEvent<Roadwork> | FullWidthCellKeyDownEvent<Roadwork>) {
+    if ((event.event as KeyboardEvent | null)?.key === 'Enter' && event.data) this.openById(event.data.id);
   }
 
   protected openById(id: string) {

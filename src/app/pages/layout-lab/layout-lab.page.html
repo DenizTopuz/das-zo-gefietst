@@ -14,6 +14,10 @@
           [pillColor]="severityColor[incident.severity]"
           [active]="selectedId() === incident.id"
           (click)="selectedId.set(incident.id)"
+            [showButton]="true"
+            buttonIcon="visibility"
+            buttonLabel="Toon incident"
+            (buttonClicked)="selectedId.set(incident.id)"
         ></ndw-list-item>
       }
     </ndw-list>
