@@ -19,6 +19,10 @@ npm run build
 | `/maatregelen` | Matrixborden en verkeersmaatregelen |
 | `/layout-lab` | Vier layoutvarianten met dezelfde data |
 
+## Componentlogboek
+
+Wijzigingen aan componenten en afwijkingen van het design system staan in [COMPONENT-CHANGELOG.md](COMPONENT-CHANGELOG.md), met een `CC-nnn`-ID en een link naar de bijbehorende NDW Storybook-pagina.
+
 ## Structuur
 - `src/app/data` – modellen, dummy data en `TrafficDataService` (signals, GeoJSON).
 - `src/app/map/ndw-map.component.ts` – herbruikbare kaart (extends `MapComponent` uit `@ndwnu/map`). Bevat altijd `ndw-map-display` om te wisselen tussen NWB- en OSM-stijl (`NDWMapStyle` / `NDWOSMMapStyle`) en het aan/uit zetten van lagen.

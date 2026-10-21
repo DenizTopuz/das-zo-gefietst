@@ -65,6 +65,10 @@
   border-collapse: collapse;
   @include ndw-paragraph-md;
 
+  th {
+    @include ndw-paragraph-bold-md;
+  }
+
   th,
   td {
     text-align: left;
