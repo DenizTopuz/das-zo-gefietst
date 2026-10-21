@@ -45,8 +45,10 @@ const BACKGROUNDS: MapBackgroundOption<BackgroundStyle>[] = [
 
       <div class="zoom">
         <ndw-map-button icon="zoom-to-content" ariaLabel="Zoom naar alle data" (clicked)="fitToData()"></ndw-map-button>
-        <ndw-map-button icon="zoom-in" ariaLabel="Inzoomen" (clicked)="map.zoomIn()"></ndw-map-button>
-        <ndw-map-button icon="zoom-out" ariaLabel="Uitzoomen" (clicked)="map.zoomOut()"></ndw-map-button>
+        <div class="map-control-group" role="group" aria-label="Zoom">
+          <ndw-map-button icon="zoom-in" ariaLabel="Inzoomen" (clicked)="map.zoomIn()"></ndw-map-button>
+          <ndw-map-button icon="zoom-out" ariaLabel="Uitzoomen" (clicked)="map.zoomOut()"></ndw-map-button>
+        </div>
       </div>
     </div>
   `,

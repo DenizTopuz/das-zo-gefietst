@@ -27,3 +27,15 @@
   flex-direction: column;
   gap: var(--ndw-spacing-xs);
 }
+
+// Stand-in for the design system's `ndw-map-button-group` (in Storybook, not yet in @ndwnu/design-system 14.5.0).
+.map-control-group {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--ndw-border-size-sm);
+  overflow: hidden;
+  background-color: var(--ndw-color-grey-200);
+  border: var(--ndw-border-size-sm) solid var(--ndw-color-grey-200);
+  border-radius: var(--ndw-border-radius-sm);
+  box-shadow: var(--ndw-elevation-content);
+}
