@@ -22,3 +22,13 @@ ndw-main-navigation-menu ndw-menu-icon ndw-icon {
 .maplibregl-ctrl-attrib {
   display: none;
 }
+
+// CC-032: keyboard focus on menu items and submenu items: grey background plus a gold, rounded
+// 2px ring (as in the NDW reference) instead of the default browser outline.
+ndw-main-navigation-menu [ndwButton]:focus-visible,
+.sub-menu [ndwButton]:focus-visible {
+  background-color: var(--ndw-color-grey-100);
+  outline: var(--ndw-border-size-md) solid var(--ndw-color-warning-500);
+  outline-offset: 0;
+  border-radius: var(--ndw-border-radius-md);
+}
