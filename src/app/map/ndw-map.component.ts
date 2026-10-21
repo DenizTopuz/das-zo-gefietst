@@ -33,15 +33,15 @@ const BACKGROUNDS: MapBackgroundOption<BackgroundStyle>[] = [
     <div #mapContainer class="map" role="application" aria-label="Verkeerskaart"></div>
 
     <div class="controls">
+      @if (showLegend()) {
+        <ndw-map-legend [groups]="legend()"></ndw-map-legend>
+      }
       <ndw-map-display
         [backgroundOptions]="backgrounds"
         [layerOptions]="layerOptions()"
         (backgroundChange)="onBackgroundChange($event)"
         (layerChange)="onLayerChange($event)"
       ></ndw-map-display>
-      @if (showLegend()) {
-        <ndw-map-legend [groups]="legend()"></ndw-map-legend>
-      }
 
       <div class="zoom">
         <ndw-map-button icon="zoom-to-content" ariaLabel="Zoom naar alle data" (clicked)="fitToData()"></ndw-map-button>
