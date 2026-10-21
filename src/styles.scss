@@ -52,3 +52,20 @@ ndw-main-navigation.expanded footer {
     padding-inline-start: var(--ndw-spacing-lg) !important;
   }
 }
+
+// CC-037: make the "Kaartweergave" control as tall as the other map buttons (40px, like the zoom
+// buttons). By default it is 50px: `content-box` adds 8px padding and a 2px border to its 40px height,
+// and its thumbnail is 42px.
+ndw-map-display .map-control {
+  box-sizing: border-box;
+  height: 2.5rem;
+}
+
+ndw-map-display ndw-map-display-option,
+ndw-map-display .map-control .content-wrapper {
+  height: 1.875rem;
+}
+
+ndw-map-display ndw-map-display-option {
+  width: 1.875rem;
+}
