@@ -16,3 +16,9 @@ ndw-main-navigation-menu ndw-menu-icon ndw-icon {
   position: relative;
   top: var(--ndw-spacing-3xs);
 }
+
+// CC-030: hide the MapLibre attribution control on every map (requested). Note: the basemap data
+// (OpenStreetMap, PDOK) requires attribution when published or shown to others.
+.maplibregl-ctrl-attrib {
+  display: none;
+}
