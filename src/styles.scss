@@ -95,6 +95,11 @@ ndw-map-display ndw-map-display-option {
   width: max-content;
   padding: var(--ndw-spacing-2xs) var(--ndw-spacing-xs);
   text-align: center;
+  // The DS uses `word-break: break-word`, which splits single words such as "Inzoomen" near the screen
+  // edge. Only break at spaces.
+  word-break: normal;
+  overflow-wrap: normal;
+  transform: translate(var(--tooltip-shift, 0px), var(--tooltip-shift-y, 0px));
 
   &::before {
     content: '';
@@ -107,13 +112,9 @@ ndw-map-display ndw-map-display-option {
     pointer-events: none;
   }
 
-  &[data-placement='top'],
-  &[data-placement='bottom'] {
-    transform: translateX(var(--tooltip-shift, 0px));
-
-    &::before {
-      left: calc(var(--tooltip-arrow-x, 50%) - var(--ndw-spacing-2xs));
-    }
+  &[data-placement='top']::before,
+  &[data-placement='bottom']::before {
+    left: calc(var(--tooltip-arrow-x, 50%) - var(--ndw-spacing-2xs));
   }
 
   &[data-placement='top']::before {

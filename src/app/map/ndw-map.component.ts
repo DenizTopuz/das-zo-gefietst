@@ -32,7 +32,7 @@ const BACKGROUNDS: MapBackgroundOption<BackgroundStyle>[] = [
   template: `
     <div #mapContainer class="map" role="application" aria-label="Verkeerskaart"></div>
 
-    <div class="controls">
+    <div class="controls" data-tooltip-side="left">
       @if (showLegend()) {
         <ndw-map-legend [groups]="legend()"></ndw-map-legend>
       }
