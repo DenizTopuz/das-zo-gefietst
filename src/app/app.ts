@@ -3,6 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { LayoutComponent, MenuItem } from '@ndwnu/design-system';
 import { filter, map } from 'rxjs';
+import { observeTooltipPlacement } from './shared/tooltip-placement';
 
 const TOP_MENU: MenuItem[] = [
   { label: 'Dashboard', icon: 'dashboard', path: ['/dashboard'] },
@@ -41,6 +42,10 @@ const BOTTOM_MENU: MenuItem[] = [
   `,
 })
 export class App {
+  constructor() {
+    observeTooltipPlacement();
+  }
+
   protected readonly footerTexts = ['Dit is een beta versie', 'Ingelogd onder Nationaal Dataportaal Wegverkeer'];
 
   readonly #router = inject(Router);

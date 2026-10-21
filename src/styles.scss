@@ -84,3 +84,54 @@ ndw-map-display ndw-map-display-option {
   border-radius: 0;
   box-shadow: none;
 }
+
+// CC-039: `ndw-tooltip` (design system): equal vertical padding (the DS uses 4px top and 2px bottom),
+// text-width box, an arrow with rounded corners that points at the trigger, and horizontal centring
+// for top/bottom placement (the DS aligns the tooltip's left edge to the trigger's centre minus 16px).
+// `data-placement` is set by `observeTooltipPlacement()` in `src/app/shared/tooltip-placement.ts`.
+.cdk-overlay-container ndw-tooltip {
+  width: max-content;
+  padding: var(--ndw-spacing-2xs) var(--ndw-spacing-xs);
+  text-align: center;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: var(--ndw-spacing-xs);
+    height: var(--ndw-spacing-xs);
+    background-color: var(--ndw-color-grey-700);
+    border-radius: var(--ndw-border-radius-xs);
+    transform: rotate(45deg);
+    pointer-events: none;
+  }
+
+  &[data-placement='top'],
+  &[data-placement='bottom'] {
+    transform: translateX(calc(-50% + 16px));
+
+    &::before {
+      left: calc(50% - var(--ndw-spacing-2xs));
+    }
+  }
+
+  &[data-placement='top']::before {
+    bottom: calc(var(--ndw-spacing-2xs) * -1);
+  }
+
+  &[data-placement='bottom']::before {
+    top: calc(var(--ndw-spacing-2xs) * -1);
+  }
+
+  &[data-placement='right']::before,
+  &[data-placement='left']::before {
+    top: calc(50% - var(--ndw-spacing-2xs));
+  }
+
+  &[data-placement='right']::before {
+    left: calc(var(--ndw-spacing-2xs) * -1);
+  }
+
+  &[data-placement='left']::before {
+    right: calc(var(--ndw-spacing-2xs) * -1);
+  }
+}
