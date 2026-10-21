@@ -49,6 +49,9 @@ Nieuwe wijzigingen komen **onderaan** de tabel *Wijzigingen*, met het volgende v
 | CC-024 | 2026-10-21 | [AG Grid](https://design.ndw.nu/ndw-storybook/?path=/docs/components-table-ag-grid--docs) wegwerkzaamhedentabel | Fix | `(cellKeyDown)`: Enter op een rij opent het detail | Rij-klik werkte alleen met muis | Eventueel standaard in het AG Grid-thema/voorbeeld | Opgelost |
 | CC-025 | 2026-10-21 | Kaart (`app-ndw-map`, MapLibre-canvas) en pagina Verkeerskaart | Fix | Markers en lijnen zijn canvas-objecten zonder toetsenbordtoegang. Op de Verkeerskaart staat nu in het paneel een [Accordion](https://design.ndw.nu/ndw-storybook/?path=/docs/components-accordion--docs) met [Collapsible](https://design.ndw.nu/ndw-storybook/?path=/docs/components-accordion--docs) en [List](https://design.ndw.nu/ndw-storybook/?path=/docs/components-list-default--docs) van alle incidenten, werkzaamheden, files en matrixborden, elk met een `showButton` ("Toon …"). Een keuze opent de details en schuift de kaart naar het object. Op het dashboard staat een knop "Alle incidenten bekijken". Het paneel scrolt zelf (`max-height`). | Canvas-objecten hebben geen toetsenbordtoegang (WCAG 2.1.1) | Voorstel aan DS-team of `@ndwnu/map`: toetsenbordnavigatie tussen kaartobjecten | Opgelost |
 | CC-026 | 2026-10-21 | [Layout](https://design.ndw.nu/ndw-storybook/?path=/docs/components-layout--docs) / `ndw-main-navigation` en [Card](https://design.ndw.nu/ndw-storybook/?path=/docs/components-card--docs) | DS-opmerking | Geen wijziging mogelijk in dit project. Broncontrole in 14.5.0: `ndw-main-navigation` zet het menu in een `<main>` (naast de `<main>` van `ndw-layout`), dus er zijn twee `<main>` en geen `<nav>`. `ndw-card` heeft als host `id: 'cardId'`, dus elke kaart op een pagina heeft hetzelfde id | Landmarks en unieke id's (WCAG 1.3.1, 4.1.1) | Melden aan DS-team: `<nav>` voor het menu en een uniek id uit `CARD_ID_TOKEN`. Niet oplossen via `node_modules` | Open (bij DS-team) |
+| CC-027 | 2026-10-21 | [Main Navigation](https://design.ndw.nu/ndw-storybook/?path=/docs/components-main-navigation--docs) (menu in `ndw-layout`), iconen | Afwijking | Globale regel in `src/styles.scss`: `ndw-main-navigation-menu ndw-menu-icon ndw-icon { position: relative; top: var(--ndw-spacing-3xs); }`. Het 16px-icoon staat nu 2px lager. Gemeten: icoonmidden 20,8px, tekstmidden 21px, itemhoogte 42px (was 18,8px) | Icoon stond 2,2px boven het midden van het label | Verwijder de regel zodra het DS de uitlijning herstelt; voorstel aan DS-team | Opgelost (bij DS-team melden) |
+| CC-028 | 2026-10-21 | [Main Navigation](https://design.ndw.nu/ndw-storybook/?path=/docs/components-main-navigation--docs) actieve staat | Fix | `app.ts` zet `MenuItem.active` op basis van de huidige URL (`NavigationEnd`). Het DS toont de actieve staat alleen via `item.active`; er was geen automatische router-koppeling. Resultaat: actief item krijgt de lichtblauwe achtergrond `--ndw-color-info-100` (rgb 235,245,255) | Het menu toonde nooit een actieve pagina | Gebruik zoals bedoeld door het DS (geen eigen styling) | Opgelost |
+| CC-029 | 2026-10-21 | Kaartlagen in `app-ndw-map` | Fix | Wit randje (casing) onder de lijnen voor files en werkzaamheden; verwijderd de verwijzing naar het niet-bestaande token `--ndw-color-critical-400` | Kaartkleuren haalden 2,5:1 tegen parkeerterreinen en 2,66:1 tegen RVM-wegranden. Met wit randje blijft elke lijn contrasteren | n.v.t. | Opgelost |
 
 ## Gebruikte NDW-componenten (ongewijzigd, `Gebruik`)
 
@@ -93,8 +96,11 @@ Gecontroleerd in code en in de draaiende preview (NDW-thema, geen `data-theme="n
 - Ook opgelost: toetsenbordtoegang tot de kaartobjecten via een lijst (CC-025).
 - Open, alleen te verhelpen door het DS-team: landmarks en dubbele id's (CC-026).
 
+**Aanvullend gecontroleerd (2026-10-21)**
+- **NWB-thema** (`data-theme="nwb"`): werkt; tokens wisselen naar turkoois. Zelfde contrastpatroon als NDW, iets slechter: turkoois primair op `grey-50` = 4,25:1 (knop/tab) en 4,29:1 (badge); merknaam in het menu **2,28:1**. Pills en alert-icoon zijn gelijk aan CC-016 en CC-019.
+- **Kaartkleuren**: incident/file rood `#EB0000`, werk `#956D0E`, matrixbord `#0070D1`. Tegen de achtergrond (`#F5F5F5`) en water 4,3 tot 4,5:1; tegen witte randjes 4,6 tot 5,0:1. Zie CC-029.
+- Files zijn effen lijnen, werkzaamheden gestippeld, incidenten grote en matrixborden kleine cirkels: onderscheid niet alleen op kleur.
+
 **Nog niet gecontroleerd**
 - Echte schermlezertest (VoiceOver) en zichtbare focusring bij Tab.
 - Zoomen tot 200% en responsief gedrag onder 1024px.
-- NWB-thema (`data-theme="nwb"`).
-- Contrast van kaartkleuren (incident, file, werk) op de basiskaart.

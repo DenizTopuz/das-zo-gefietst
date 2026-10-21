@@ -9,3 +9,10 @@ body {
   color: var(--ndw-color-text);
   background: var(--ndw-color-grey-50);
 }
+
+// CC-027: in `ndw-main-navigation` the 16px icon sits ~2px above the label's centre; lower it so
+// icon and text align. Remove this rule when the design system fixes the alignment.
+ndw-main-navigation-menu ndw-menu-icon ndw-icon {
+  position: relative;
+  top: var(--ndw-spacing-3xs);
+}

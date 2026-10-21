@@ -131,7 +131,9 @@ export class NdwMapComponent extends MapComponent {
     const kindColor = ['match', ['get', 'kind'], 'incident', colors.incident, 'matrix', colors.matrix, colors.jam];
 
     map.addSource(SOURCE_ID, { type: 'geojson', data: this.features() });
+    map.addLayer({ id: 'app-jam-casing', type: 'line', source: SOURCE_ID, filter: ['==', ['get', 'kind'], 'jam'], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': colors.outline, 'line-width': 9 } });
     map.addLayer({ id: 'app-jam', type: 'line', source: SOURCE_ID, filter: ['==', ['get', 'kind'], 'jam'], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': colors.jam, 'line-width': 6 } });
+    map.addLayer({ id: 'app-roadwork-casing', type: 'line', source: SOURCE_ID, filter: ['==', ['get', 'kind'], 'roadwork'], layout: { 'line-join': 'round' }, paint: { 'line-color': colors.outline, 'line-width': 8 } });
     map.addLayer({ id: 'app-roadwork', type: 'line', source: SOURCE_ID, filter: ['==', ['get', 'kind'], 'roadwork'], layout: { 'line-join': 'round' }, paint: { 'line-color': colors.roadwork, 'line-width': 5, 'line-dasharray': [2, 1.5] } });
     map.addLayer({ id: 'app-selected', type: 'circle', source: SOURCE_ID, filter: ['==', ['get', 'id'], ''], paint: { 'circle-radius': 18, 'circle-color': colors.selected, 'circle-opacity': 0.35 } });
     map.addLayer({
@@ -172,7 +174,9 @@ export class NdwMapComponent extends MapComponent {
     const kinds = this.activeKinds();
     const inKinds = ['in', ['get', 'kind'], ['literal', kinds]] as ExpressionSpecification;
     map.setFilter('app-jam', ['all', ['==', ['get', 'kind'], 'jam'], inKinds]);
+    map.setFilter('app-jam-casing', ['all', ['==', ['get', 'kind'], 'jam'], inKinds]);
     map.setFilter('app-roadwork', ['all', ['==', ['get', 'kind'], 'roadwork'], inKinds]);
+    map.setFilter('app-roadwork-casing', ['all', ['==', ['get', 'kind'], 'roadwork'], inKinds]);
     map.setFilter('app-points', ['all', ['==', ['geometry-type'], 'Point'], inKinds]);
 
     const selected = this.selectedId();
@@ -192,7 +196,7 @@ function tokenColors() {
   const token = (name: string) => style.getPropertyValue(name).trim();
   return {
     incident: token('--ndw-color-critical-500'),
-    jam: token('--ndw-color-critical-400') || token('--ndw-color-critical-500'),
+    jam: token('--ndw-color-critical-500'),
     roadwork: token('--ndw-color-warning-600') || token('--ndw-color-warning-500'),
     matrix: token('--ndw-color-info-500'),
     selected: token('--ndw-color-primary'),
