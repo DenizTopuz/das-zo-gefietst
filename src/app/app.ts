@@ -20,7 +20,7 @@ const BOTTOM_MENU: MenuItem[] = [{ label: 'Layout lab', icon: 'dashboard_customi
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <ndw-layout
-      applicationName="Verkeersprototype"
+      applicationName="Template"
       environment="Local"
       version="0.1.0"
       [topMenuItems]="menu()"
