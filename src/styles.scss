@@ -78,9 +78,10 @@ ndw-map-display ndw-map-display-option {
   }
 }
 
-// CC-038: buttons inside a `.map-control-group` are square and flat; the group draws the outer
+// CC-038: buttons inside a `.map-control-group` are square, flat and borderless (their own 1px border would add to the group's 1px divider); the group draws the outer
 // radius, border and the 1px divider (as the Map Button Group in Storybook).
 .map-control-group ndw-map-button .map-control {
+  border: 0;
   border-radius: 0;
   box-shadow: none;
 }
