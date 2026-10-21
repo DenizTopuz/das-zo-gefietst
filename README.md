@@ -27,19 +27,22 @@ npm run build
 
 ## Werken met branches (template → projecten)
 
-`main` is de **basis/fundering**: Angular 22 + design system + kaart + dummydata. Wijzig `main` alleen om de template zelf te verbeteren.
+Repo: `DenizTopuz/ndw-template` (private, GitHub *template repository*).
 
+- `ndw-template_v1` is de **standaardbranch en de basis/fundering**: Angular 22 + design system + kaart + dummydata. Wijzig deze branch alleen om de template zelf te verbeteren.
+- Een grote nieuwe basis wordt een nieuwe branch, bijvoorbeeld `ndw-template_v2`, die je als standaardbranch instelt. `_v1` blijft bestaan.
+
+**Nieuw project of applicatie**
+- Op GitHub: *Use this template → Create a new repository* (kopieert de standaardbranch, dus de basis).
+- Of in dezelfde repo, in GitHub Desktop: *Current Branch → New Branch*, basis `ndw-template_v1`, naam `project/<naam>`.
+
+**Terug naar de basis**
+- Kies in GitHub Desktop de branch `ndw-template_v1`, of in de terminal: `git switch ndw-template_v1`.
+
+**Basisverbeteringen doorgeven aan een project**
 ```bash
-# nieuw project of applicatie vanaf de template
-git switch main
-git switch -c project/<naam>
-
-# terug naar de basis
-git switch main
-git switch -c feature/<idee> template-v1   # of vanaf de vastgezette tag
-
-# basisverbeteringen doorgeven aan een project
-git switch project/<naam> && git merge main
+git switch project/<naam>
+git merge ndw-template_v1
 ```
 
-De tag `template-v1` markeert de eerste, schone versie van de basis.
+Lokale bladwijzer: de tag `template-v1` wijst naar de eerste schone versie van de basis.
