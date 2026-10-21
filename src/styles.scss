@@ -78,15 +78,45 @@ ndw-map-display ndw-map-display-option {
   }
 }
 
-// CC-040: more padding in the open "Kaartweergave" panel (the DS uses 4px, so the content touches the
-// edge and the labels under the background tiles are clipped), and more room between the tiles.
+// CC-040: more padding in the open "Kaartweergave" panel. The DS uses 4px, so the content touches the
+// edge, and its background tiles (`label.column`) are a fixed 64x64px with no padding: the grey hover
+// background lies right against the image and the 68px label "NWB-kaart" sticks out of the tile on
+// both sides. The tile now has equal padding on all sides and grows with its content. Layer rows get
+// more horizontal padding (8px instead of 4px) and the header loses its top padding.
 .cdk-overlay-container div.map-control-dropdown {
   padding: var(--ndw-spacing-md);
 
-  // `[role]` and `ul` outweigh the DS's `.map-control-dropdown[_ngcontent] ul.map-control-dropdown__backgrounds[_ngcontent]`.
-  &[role='dialog'] ul.map-control-dropdown__backgrounds {
-    gap: var(--ndw-spacing-sm);
+  ndw-map-display-option label.column {
+    width: auto;
+    height: auto;
+    min-width: 4rem;
+    padding: var(--ndw-spacing-xs);
+    justify-content: center;
   }
+
+  // The panel header has 8px padding-top of its own, on top of the panel's 16px: too much space above the title.
+  &[role='dialog'] > header {
+    padding-top: 0;
+  }
+
+  // Layer rows: 4px left and right is too tight; the grey hover background hugs the icon tile.
+  ndw-map-display-option label:not(.column) {
+    padding-inline: var(--ndw-spacing-xs);
+  }
+}
+
+// CC-041: centre the icons in the layer tiles of the open "Kaartweergave" panel. In the DS the icon box is
+// 42px (`content-box`: 32px + 4px padding + 1px border) with the 24px glyph aligned top-left, so it sits
+// ~4px off-centre. As in the newer Storybook the tile is 32px (`border-box`) with the glyph centred;
+// no padding, because the 24px glyph does not fit in the 22px left inside the DS's 4px padding.
+.cdk-overlay-container div.map-control-dropdown ndw-map-display-option label > ndw-icon {
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  line-height: 1;
 }
 
 // CC-038: buttons inside a `.map-control-group` are square, flat and borderless (their own 1px border would add to the group's 1px divider); the group draws the outer
