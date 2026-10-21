@@ -10,7 +10,7 @@ npm run build
 
 ## Pagina's
 
-Elke route toont een kaart over de volle pagina (`MapPageComponent`). Routes en lagen staan in `src/app/app.routes.ts`.
+Elke route toont een kaart over de volle pagina (`MapPageComponent`). Routes en lagen staan in `src/app/app.routes.ts`. De lagen staan standaard uit; zet ze aan via de knop *Kaartweergave* (of vooraf met `[defaultVisibleKinds]` op `app-ndw-map`).
 
 | Route | Lagen |
 | --- | --- |

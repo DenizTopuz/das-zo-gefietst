@@ -33,7 +33,7 @@ const BACKGROUNDS: MapBackgroundOption<BackgroundStyle>[] = [
     <div #mapContainer class="map" role="application" aria-label="Verkeerskaart"></div>
 
     <div class="controls" data-tooltip-side="left">
-      @if (showLegend()) {
+      @if (showLegend() && activeKinds().length) {
         <ndw-map-legend [groups]="legend()"></ndw-map-legend>
       }
       <ndw-map-display
@@ -59,6 +59,8 @@ export class NdwMapComponent extends MapComponent {
   readonly features = input.required<FeatureCollection>();
   /** Which kinds are offered in the layer selector. */
   readonly kinds = input<MapKind[]>(['incident', 'roadwork', 'jam', 'matrix']);
+  /** Layers that are on until the user changes them. Default: all off. */
+  readonly defaultVisibleKinds = input<MapKind[]>([]);
   readonly selectedId = input<string | null>(null);
   readonly showLegend = input(true);
   readonly featureSelected = output<string>();
@@ -69,7 +71,7 @@ export class NdwMapComponent extends MapComponent {
   #hasFitted = false;
   #lastCentered: string | null = null;
 
-  protected readonly activeKinds = computed(() => this.#visibleKinds() ?? this.kinds());
+  protected readonly activeKinds = computed(() => this.#visibleKinds() ?? this.defaultVisibleKinds());
   protected readonly layerOptions = computed<MapDisplayOption[]>(() =>
     this.kinds().map((kind) => ({ id: kind, ...KIND_LABELS[kind], active: this.activeKinds().includes(kind) })),
   );
