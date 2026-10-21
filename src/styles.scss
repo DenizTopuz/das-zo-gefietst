@@ -54,8 +54,9 @@ ndw-main-navigation.expanded footer {
 }
 
 // CC-037: make the "Kaartweergave" control as tall as the other map buttons (40px, like the zoom
-// buttons). By default it is 50px: `content-box` adds 8px padding and a 2px border to its 40px height,
-// and its thumbnail is 42px.
+// buttons), as in the newer Storybook: `border-box` height 40px, thumbnail and label button 32px.
+// In @ndwnu/design-system 14.5.0 it is 50px: `content-box` adds 8px padding and a 2px border to its
+// 40px height, and its thumbnail is 42px (32px + 4px padding + 1px border, `content-box`).
 ndw-map-display .map-control {
   box-sizing: border-box;
   height: 2.5rem;
@@ -63,18 +64,28 @@ ndw-map-display .map-control {
 
 ndw-map-display ndw-map-display-option,
 ndw-map-display .map-control .content-wrapper {
-  height: 1.875rem;
+  height: 2rem;
 }
 
 ndw-map-display ndw-map-display-option {
-  width: 1.875rem;
+  width: 2rem;
 
-  // `[src]` raises specificity above the design system's `img[_ngcontent]` (32px + 4px padding + 1px border).
+  // `[src]` raises specificity above the design system's `img[_ngcontent]`.
   img[src] {
     box-sizing: border-box;
     width: 100%;
     height: 100%;
-    padding: var(--ndw-spacing-3xs);
+  }
+}
+
+// CC-040: more padding in the open "Kaartweergave" panel (the DS uses 4px, so the content touches the
+// edge and the labels under the background tiles are clipped), and more room between the tiles.
+.cdk-overlay-container div.map-control-dropdown {
+  padding: var(--ndw-spacing-md);
+
+  // `[role]` and `ul` outweigh the DS's `.map-control-dropdown[_ngcontent] ul.map-control-dropdown__backgrounds[_ngcontent]`.
+  &[role='dialog'] ul.map-control-dropdown__backgrounds {
+    gap: var(--ndw-spacing-sm);
   }
 }
 
