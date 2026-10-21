@@ -9,15 +9,19 @@ npm run build
 ```
 
 ## Pagina's
-| Route | Inhoud |
+
+Elke route toont een kaart over de volle pagina (`MapPageComponent`). Routes en lagen staan in `src/app/app.routes.ts`.
+
+| Route | Lagen |
 | --- | --- |
-| `/dashboard` | KPI's, kaart, laatste incidenten, werkzaamheden |
-| `/incidenten` | Lijst + kaart met detailkaart |
-| `/wegwerkzaamheden` | AG Grid-tabel of kaart, filters |
-| `/wegwerkzaamheden/:id` | Detail met tabs en kaart |
-| `/kaart` | Volledige verkeerskaart met alle lagen |
-| `/maatregelen` | Matrixborden en verkeersmaatregelen |
-| `/layout-lab` | Vier layoutvarianten met dezelfde data |
+| `/dashboard` | incidenten, files |
+| `/incidenten` | incidenten, files |
+| `/wegwerkzaamheden`, `/wegwerkzaamheden/:id` | wegwerkzaamheden |
+| `/kaart` | alles |
+| `/maatregelen` | matrixborden |
+| `/layout-lab` | alles |
+
+De eerdere, volledige pagina's (dashboard, tabel, detail, enzovoort) staan in git-tag `template-v1-paginas`.
 
 ## Componentlogboek
 
@@ -26,7 +30,7 @@ Wijzigingen aan componenten en afwijkingen van het design system staan in [COMPO
 ## Structuur
 - `src/app/data` – modellen, dummy data en `TrafficDataService` (signals, GeoJSON).
 - `src/app/map/ndw-map.component.ts` – herbruikbare kaart (extends `MapComponent` uit `@ndwnu/map`). Bevat altijd `ndw-map-display` om te wisselen tussen NWB- en OSM-stijl (`NDWMapStyle` / `NDWOSMMapStyle`) en het aan/uit zetten van lagen.
-- `src/app/pages` – de pagina's. Kopieer een pagina of een variant uit `layout-lab` om een nieuwe layout te prototypen.
+- `src/app/shared/map-page.component.ts` – de pagina met alleen een kaart. Vervang het template om een layout te bouwen.
 - Kleuren op de kaart worden uit de `--ndw-color-*` tokens gelezen.
 
 ## Werken met branches (template → projecten)
