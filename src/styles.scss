@@ -88,7 +88,8 @@ ndw-map-display ndw-map-display-option {
 
 // CC-039: `ndw-tooltip` (design system): equal vertical padding (the DS uses 4px top and 2px bottom),
 // text-width box, an arrow with rounded corners that points at the trigger, and horizontal centring
-// for top/bottom placement (the DS aligns the tooltip's left edge to the trigger's centre minus 16px).
+// for top/bottom placement (the DS aligns the tooltip's left edge to the trigger's centre minus 16px),
+// kept inside the viewport; the arrow keeps pointing at the trigger's centre.
 // `data-placement` is set by `observeTooltipPlacement()` in `src/app/shared/tooltip-placement.ts`.
 .cdk-overlay-container ndw-tooltip {
   width: max-content;
@@ -108,10 +109,10 @@ ndw-map-display ndw-map-display-option {
 
   &[data-placement='top'],
   &[data-placement='bottom'] {
-    transform: translateX(calc(-50% + 16px));
+    transform: translateX(var(--tooltip-shift, 0px));
 
     &::before {
-      left: calc(50% - var(--ndw-spacing-2xs));
+      left: calc(var(--tooltip-arrow-x, 50%) - var(--ndw-spacing-2xs));
     }
   }
 
@@ -125,7 +126,7 @@ ndw-map-display ndw-map-display-option {
 
   &[data-placement='right']::before,
   &[data-placement='left']::before {
-    top: calc(50% - var(--ndw-spacing-2xs));
+    top: calc(var(--tooltip-arrow-y, 50%) - var(--ndw-spacing-2xs));
   }
 
   &[data-placement='right']::before {
