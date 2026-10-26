@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { MapKind } from './data/models';
+import { LabShellComponent } from './layout-lab/lab-shell.component';
 import { MapPageComponent } from './shared/map-page.component';
 
 const mapPage = (path: string, title: string, kinds?: MapKind[]) => ({
@@ -17,6 +18,14 @@ export const routes: Routes = [
   mapPage('wegwerkzaamheden/:id', 'Wegwerkzaamheid', ['roadwork']),
   mapPage('kaart', 'Verkeerskaart'),
   mapPage('maatregelen', 'Maatregelen', ['matrix']),
-  mapPage('layout-lab', 'Layout lab'),
+  {
+    path: 'layout-lab',
+    component: LabShellComponent,
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 't2' },
+      { path: 't2', title: 'T2 Werkvoorraad + kaart · Template', loadComponent: () => import('./layout-lab/templates/t2.page').then((m) => m.T2Page) },
+      { path: '**', redirectTo: 't2' },
+    ],
+  },
   { path: '**', redirectTo: 'dashboard' },
 ];

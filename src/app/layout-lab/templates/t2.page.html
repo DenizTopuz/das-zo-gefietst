@@ -1,0 +1,130 @@
+<app-screen-header title="Actuele meldingen">
+  <span class="ndw-paragraph-md updated">Bijgewerkt om {{ updatedLabel(records()[0].updatedAt) }}</span>
+</app-screen-header>
+
+<app-scope-toolbar
+  [(search)]="state.search"
+  searchLabel="Zoek in meldingen"
+  placeholder="Zoek op naam of ID"
+  [filterCount]="results.activeFilterCount()"
+  [filtersOpen]="filtersMode() !== 'none'"
+  filtersId="t2-filters"
+  scope="Midden-Nederland"
+  (filtersToggle)="toggleFilters()"
+>
+  <div role="group" aria-label="Weergave">
+    <ndw-switcher [options]="viewOptions()" [selectedValue]="effView()" (selectionChange)="setView($event)"></ndw-switcher>
+  </div>
+  @if (effView() === 'beide') {
+    <div role="group" aria-label="Indeling">
+      <ndw-switcher [options]="arrangementOptions" [selectedValue]="state.arrangement()" (selectionChange)="setArrangement($event)"></ndw-switcher>
+    </div>
+    <div role="group" aria-label="Verdeling van kaart en resultaten">
+      <ndw-switcher [options]="splitPresets" [selectedValue]="presetValue()" (selectionChange)="applyPreset($event)"></ndw-switcher>
+    </div>
+  }
+</app-scope-toolbar>
+
+@if (liveNew()) {
+  <ndw-alert type="info" class="live" ariaLive="polite">
+    Nieuwe gegevens beschikbaar. <button ndwButton tertiary extra-small type="button" (click)="refreshLive()">Vernieuwen</button>
+    <span class="ndw-paragraph-sm">Je selectie en positie blijven behouden.</span>
+  </ndw-alert>
+}
+
+<p class="sr-only" role="status" aria-live="polite">{{ countText() }}</p>
+
+<div class="workspace">
+  @if (filtersMode() === 'dock') {
+    <aside id="t2-filters" class="dock dock--filters" aria-label="Filters">
+      <app-filter-panel [groups]="filterGroups" [filters]="state.filters()" [inViewAvailable]="effView() !== 'lijst'" (filtersChange)="state.filters.set($event)" (closed)="state.filtersOpen.set(false)" />
+    </aside>
+  }
+
+  @if (filtersMode() === 'overlay') {
+    <aside id="t2-filters" class="overlay" aria-label="Filters" (keydown.escape)="state.filtersOpen.set(false)">
+      <app-filter-panel mode="overlay" [groups]="filterGroups" [filters]="state.filters()" [inViewAvailable]="effView() !== 'lijst'" (filtersChange)="state.filters.set($event)" (closed)="state.filtersOpen.set(false)" />
+    </aside>
+  }
+
+  <div class="main" [hidden]="detailMode() === 'view'">
+    <app-split-workspace
+      [direction]="state.arrangement() === 'onder' ? 'column' : 'row'"
+      [reverse]="state.arrangement() === 'naast'"
+      [(ratio)]="state.ratio"
+      [show]="splitShow()"
+      [min]="splitBounds().min"
+      [max]="splitBounds().max"
+      label="Verdeling tussen kaart en resultaten"
+      firstName="Kaart"
+      secondName="Resultaten"
+      firstId="t2-map-pane"
+      secondId="t2-results-pane"
+    >
+      <div first class="pane-content map-pane">
+        <app-ndw-map
+          [features]="features()"
+          [kinds]="['melding']"
+          [defaultVisibleKinds]="['melding']"
+          [selectedId]="state.selectedId()"
+          [initialView]="state.mapView()"
+          [showLegend]="true"
+          ariaLabel="Kaart met meldingen"
+          (featureSelected)="select($event)"
+          (viewChanged)="onView($event)"
+        />
+      </div>
+
+      <div second class="pane-content results-pane">
+        @if (statusKind(); as kind) {
+          <app-status-message [kind]="kind" [text]="kind === 'empty' ? emptyText() : ''" (retry)="retry()" (clear)="clearAll()" />
+        } @else if (narrow()) {
+          <ul class="cards" aria-label="Meldingen">
+            @for (r of results.filtered(); track r.id) {
+              <li>
+                <button type="button" class="card" [attr.data-card-id]="r.id" [attr.aria-current]="r.id === state.selectedId() ? 'true' : null" [class.card--selected]="r.id === state.selectedId()" (click)="select(r.id)">
+                  <strong class="ndw-paragraph-bold-lg">{{ r.id }} · {{ r.title }}</strong>
+                  <span class="ndw-paragraph-md">{{ r.location }} · {{ updatedLabel(r.updatedAt) }}</span>
+                  <ndw-pill [color]="color(r.status)">{{ r.status }}</ndw-pill>
+                </button>
+              </li>
+            }
+          </ul>
+        } @else {
+          <app-results-table
+            [rows]="results.filtered()"
+            [columns]="columns"
+            [selectedId]="state.selectedId()"
+            [sort]="state.sort()"
+            (sortChange)="setSort($event)"
+            caption="Meldingen"
+            (rowSelected)="select($event)"
+          />
+        }
+        <p class="count ndw-paragraph-sm" aria-hidden="true">{{ countText() }}</p>
+      </div>
+    </app-split-workspace>
+  </div>
+
+  @if (detailMode() === 'dock' && detail(); as d) {
+    <aside class="dock dock--detail" [class.dock--wide]="state.detailWide()" aria-label="Details van geselecteerde melding">
+      <app-object-detail [data]="d" mode="dock" (closed)="closeDetail()">
+        <ng-container actions>
+          <button ndwButton type="button" (click)="markDone()">Markeer als afgehandeld</button>
+          <button ndwButton secondary type="button" (click)="showOnMap()">Toon op kaart</button>
+        </ng-container>
+      </app-object-detail>
+    </aside>
+  }
+
+  @if (detailMode() === 'view' && detail(); as d) {
+    <div class="detail-view">
+      <app-object-detail [data]="d" mode="view" backLabel="resultaten" (closed)="closeDetail()">
+        <ng-container actions>
+          <button ndwButton type="button" (click)="markDone()">Markeer als afgehandeld</button>
+          <button ndwButton secondary type="button" (click)="showOnMap()">Toon op kaart</button>
+        </ng-container>
+      </app-object-detail>
+    </div>
+  }
+</div>

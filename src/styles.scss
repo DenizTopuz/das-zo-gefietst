@@ -186,3 +186,13 @@ ndw-map-display ndw-map-display-option {
 ndw-badge:not([hidden]) {
   padding-top: var(--ndw-spacing-3xs);
 }
+
+// CC-045: DS switcher labels wrap inside a tight toolbar ("Onder / elkaar"); the slider is sized from the
+// options, so keep each label on one line and let the toolbar wrap whole switchers instead.
+ndw-switcher {
+  flex: none;
+
+  .switch-label {
+    white-space: nowrap;
+  }
+}

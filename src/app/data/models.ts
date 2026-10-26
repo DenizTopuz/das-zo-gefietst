@@ -72,4 +72,4 @@ export interface TrafficMeasure {
   description: string;
 }
 
-export type MapKind = 'incident' | 'roadwork' | 'jam' | 'matrix';
+export type MapKind = 'incident' | 'roadwork' | 'jam' | 'matrix' | 'melding' | 'laadpunt' | 'locatie';

@@ -1,0 +1,114 @@
+@use '@ndwnu/design-system/styles/base/typography' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-height: 0;
+  min-width: 0;
+  max-width: 100%;
+}
+
+// Prototype controls: visibly different from the application screen below.
+.toolbar {
+  flex: none;
+  min-width: 0;
+  background: var(--ndw-color-grey-100);
+  border-bottom: var(--ndw-border-size-md) dashed var(--ndw-color-grey-300);
+  padding: var(--ndw-spacing-xs) var(--ndw-spacing-md);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ndw-spacing-xs) var(--ndw-spacing-md);
+
+  &--controls {
+    margin-top: var(--ndw-spacing-2xs);
+  }
+}
+
+.notes-toggle {
+  margin-left: auto;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ndw-spacing-2xs);
+  color: var(--ndw-color-grey-600);
+  @include ndw-paragraph-bold-sm;
+  text-transform: uppercase;
+  letter-spacing: var(--ndw-letter-spacing-sm);
+}
+
+.group {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ndw-spacing-xs);
+  min-width: 0;
+  max-width: 100%;
+
+  // On a narrow screen the prototype toolbar scrolls sideways instead of widening the application screen.
+  ndw-switcher {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  select {
+    min-width: 11rem;
+  }
+}
+
+.label {
+  color: var(--ndw-color-grey-600);
+  @include ndw-paragraph-md;
+}
+
+.name {
+  margin: 0;
+  @include ndw-paragraph-lg;
+}
+
+.notes {
+  margin-top: var(--ndw-spacing-xs);
+  padding-top: var(--ndw-spacing-xs);
+  border-top: var(--ndw-border-size-sm) solid var(--ndw-color-grey-200);
+  max-width: 60rem;
+
+  p {
+    margin: 0 0 var(--ndw-spacing-xs);
+  }
+
+  dl {
+    margin: 0;
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: var(--ndw-spacing-3xs) var(--ndw-spacing-md);
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+.screen {
+  flex: 1 1 0;
+  min-height: 0;
+  min-width: 0;
+  background: var(--ndw-color-white);
+  display: flex;
+  flex-direction: column;
+
+  > :not(router-outlet) {
+    flex: 1 1 0;
+    min-height: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .notes dl {
+    grid-template-columns: 1fr;
+  }
+}

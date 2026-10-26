@@ -1,0 +1,48 @@
+:host {
+  display: block;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: auto;
+  background: var(--ndw-color-white);
+}
+
+.detail {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ndw-spacing-sm);
+  padding: var(--ndw-spacing-md);
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ndw-spacing-xs);
+  width: 100%;
+
+  h2 {
+    margin: 0;
+    overflow-wrap: anywhere;
+
+    &:focus-visible {
+      outline: var(--ndw-border-size-md) solid var(--ndw-color-warning-500);
+      outline-offset: var(--ndw-border-size-md);
+    }
+  }
+}
+
+ndw-key-value-list {
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ndw-spacing-xs);
+  margin-top: auto;
+  padding-top: var(--ndw-spacing-md);
+}
