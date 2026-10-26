@@ -20,7 +20,7 @@ Elke template heeft een directe URL: `/layout-lab/t1` … `/layout-lab/t6`. Para
 - URL en toestand: refresh, directe links en browser-terug; toestand per template bewaard bij wisselen; layoutvoorkeuren in localStorage (`ndw-lab:v1:<template>`).
 
 ## Nog te doen
-1. **Niet volledig getest**: T4 (kaart kiezen, browser-terug met onopgeslagen wijzigingen), T2 bij 1280×800, T3/T6 met toetsenbord en schermlezer.
+1. Getest sinds de vorige stand: T4 (locatie kiezen op kaart, recordwissel en browser-terug met onopgeslagen wijzigingen, blijven/verwerpen) en T2 bij 1280×800 (naast elkaar + detail valt terug op detail als eigen weergave). Niet getest: toetsenbord en schermlezer in T3/T6.
 2. Op smalle schermen is het werkvlak in T3 klein doordat de prototypebalk veel ruimte inneemt; de balk is prototype, niet product.
 3. Mockdata van T6 is afgeleid van de meldingen; de aantallen per periode zijn schaling, geen echte tijdreeks.
 

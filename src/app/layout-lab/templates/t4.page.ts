@@ -155,7 +155,7 @@ export class T4Page {
     if (!this.dirty()) return true;
     const choice = await this.#dialogs.confirm({
       title: 'Niet-opgeslagen wijzigingen',
-      message: `Je hebt wijzigingen in ${this.currentTitle().toLowerCase()} die nog niet zijn opgeslagen. Wat wil je doen?`,
+      message: `Je hebt wijzigingen in ${this.isNew() ? 'het nieuwe record' : `record ${this.currentId()}`} die nog niet zijn opgeslagen. Wat wil je doen?`,
       actions: [
         { label: 'Opslaan en doorgaan', value: 'save', primary: true },
         { label: 'Wijzigingen verwerpen', value: 'discard' },
