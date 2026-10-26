@@ -1,0 +1,146 @@
+@use '@ndwnu/design-system/styles/base/typography' as *;
+
+// Shared by the analysis templates (T3, T6).
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  background: var(--ndw-color-grey-50);
+}
+
+.workspace {
+  display: flex;
+  flex: 1 1 0;
+  gap: var(--ndw-spacing-md);
+  min-height: 0;
+  padding: var(--ndw-spacing-md);
+
+  &--stack {
+    flex-direction: column;
+    overflow: auto;
+    padding: var(--ndw-spacing-xs);
+  }
+}
+
+.analysis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ndw-spacing-md);
+  padding: var(--ndw-spacing-md);
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  background: var(--ndw-color-white);
+  border: var(--ndw-border-size-sm) solid var(--ndw-color-grey-200);
+  border-radius: var(--ndw-border-radius-sm);
+  flex: 0 0 clamp(24rem, 46%, 40rem);
+
+  .workspace--stack & {
+    flex: none;
+    overflow: visible;
+  }
+
+  &--full {
+    flex: 1 1 0;
+  }
+}
+
+.map-pane {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  background: var(--ndw-color-white);
+  border: var(--ndw-border-size-sm) solid var(--ndw-color-grey-200);
+  border-radius: var(--ndw-border-radius-sm);
+  overflow: hidden;
+
+  .workspace--stack & {
+    flex: none;
+    height: 24rem;
+  }
+}
+
+app-ndw-map {
+  flex: 1 1 0;
+  min-height: 0;
+  border-radius: 0;
+}
+
+.deepen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ndw-spacing-xs);
+  min-width: 0;
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  .note {
+    color: var(--ndw-color-grey-600);
+  }
+
+  app-results-table {
+    max-height: 22rem;
+    overflow: auto;
+    border: var(--ndw-border-size-sm) solid var(--ndw-color-grey-200);
+  }
+}
+
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ndw-spacing-xs);
+}
+
+.bars {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    text-align: left;
+    padding: var(--ndw-spacing-xs);
+    border-bottom: var(--ndw-border-size-sm) solid var(--ndw-color-grey-100);
+    vertical-align: middle;
+  }
+
+  .track {
+    display: block;
+    height: 0.75rem;
+    min-width: 4rem;
+    background: var(--ndw-color-grey-100);
+    border-radius: var(--ndw-border-radius-sm);
+    overflow: hidden;
+  }
+
+  .fill {
+    display: block;
+    height: 100%;
+    background: var(--ndw-color-secondary-500);
+  }
+}
+
+.area-button {
+  all: unset;
+  cursor: pointer;
+  color: var(--ndw-color-secondary-500);
+  text-decoration: underline;
+  border-radius: var(--ndw-border-radius-sm);
+
+  &[aria-pressed='true'] {
+    font-weight: bold;
+  }
+
+  &:focus-visible {
+    outline: var(--ndw-border-size-md) solid var(--ndw-color-warning-500);
+    outline-offset: var(--ndw-border-size-md);
+  }
+}

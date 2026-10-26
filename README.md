@@ -25,7 +25,7 @@ De eerdere, volledige pagina's (dashboard, tabel, detail, enzovoort) staan in gi
 
 ## Layout lab
 
-Zes layouttemplates (T1 t/m T6) onder `/layout-lab/t1` … `/layout-lab/t6`. Status, startinstructies en wat nog moet: [LAYOUT-LAB-STATUS.md](LAYOUT-LAB-STATUS.md). T3 en T6 zijn nog niet gebouwd.
+Zes layouttemplates (T1 t/m T6) onder `/layout-lab/t1` … `/layout-lab/t6`. Status, startinstructies en wat nog moet: [LAYOUT-LAB-STATUS.md](LAYOUT-LAB-STATUS.md).
 
 ## Componentlogboek
 

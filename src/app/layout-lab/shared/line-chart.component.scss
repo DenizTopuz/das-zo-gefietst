@@ -1,0 +1,90 @@
+:host {
+  display: block;
+}
+
+figure {
+  margin: 0;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  height: 12rem;
+  overflow: visible;
+}
+
+.grid {
+  stroke: var(--ndw-color-grey-200);
+  stroke-width: 1;
+}
+
+.line {
+  fill: none;
+  stroke: var(--ndw-color-secondary-500);
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+}
+
+.compare {
+  fill: none;
+  stroke: var(--ndw-color-grey-500);
+  stroke-width: 2;
+  stroke-dasharray: 6 5;
+  vector-effect: non-scaling-stroke;
+}
+
+.dot {
+  fill: var(--ndw-color-secondary-500);
+}
+
+figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ndw-spacing-md);
+  color: var(--ndw-color-grey-600);
+}
+
+.legend {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ndw-spacing-2xs);
+}
+
+.swatch {
+  display: inline-block;
+  width: var(--ndw-spacing-lg);
+  border-top: 3px solid var(--ndw-color-secondary-500);
+
+  &--dashed {
+    border-top: 2px dashed var(--ndw-color-grey-500);
+  }
+}
+
+details {
+  margin-top: var(--ndw-spacing-xs);
+}
+
+summary {
+  cursor: pointer;
+  color: var(--ndw-color-secondary-500);
+  border-radius: var(--ndw-border-radius-sm);
+
+  &:focus-visible {
+    outline: var(--ndw-border-size-md) solid var(--ndw-color-warning-500);
+    outline-offset: var(--ndw-border-size-md);
+  }
+}
+
+table {
+  margin-top: var(--ndw-spacing-xs);
+  border-collapse: collapse;
+  width: 100%;
+  max-height: 12rem;
+
+  th,
+  td {
+    text-align: left;
+    padding: var(--ndw-spacing-2xs) var(--ndw-spacing-xs);
+    border-bottom: var(--ndw-border-size-sm) solid var(--ndw-color-grey-100);
+  }
+}

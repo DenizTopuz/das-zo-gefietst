@@ -1,4 +1,5 @@
 import { DestroyRef, effect, ElementRef, inject, Injectable, Injector, runInInjectionContext, signal, untracked, Signal, WritableSignal } from '@angular/core';
+import { AREA_OPTIONS, PERIODS, SOURCES } from './data/analysis';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import type { MapView } from '../map/ndw-map.component';
@@ -238,7 +239,7 @@ export class LabStore {
 
 // ───────────────────────── URL ⇄ state ─────────────────────────
 
-type UrlKey = 'weergave' | 'indeling' | 'id' | 'breedte' | 'kaart' | 'verdieping';
+type UrlKey = 'weergave' | 'indeling' | 'id' | 'breedte' | 'kaart' | 'verdieping' | 'periode' | 'gebied' | 'bron' | 'indicator';
 
 interface Codec {
   read(s: TemplateState): string | null;
@@ -280,6 +281,30 @@ const CODECS: Record<UrlKey, Codec> = {
     read: (s) => (s.withMap() ? 'aan' : 'uit'),
     write: (s, v) => {
       if (v === 'aan' || v === 'uit') s.withMap.set(v === 'aan');
+    },
+  },
+  periode: {
+    read: (s) => s.period(),
+    write: (s, v) => {
+      if (v && PERIODS.some((o) => o.value === v) && s.period() !== v) s.period.set(v);
+    },
+  },
+  gebied: {
+    read: (s) => s.area(),
+    write: (s, v) => {
+      if (v && AREA_OPTIONS.some((o) => o.value === v) && s.area() !== v) s.area.set(v);
+    },
+  },
+  bron: {
+    read: (s) => s.source(),
+    write: (s, v) => {
+      if (v && SOURCES.some((o) => o.value === v) && s.source() !== v) s.source.set(v);
+    },
+  },
+  indicator: {
+    read: (s) => s.indicator(),
+    write: (s, v) => {
+      if (v && /^[a-z-]+$/.test(v) && s.indicator() !== v) s.indicator.set(v);
     },
   },
   verdieping: {

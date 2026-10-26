@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, effect, inject, Injector, signal, viewChildren } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { ButtonDirective, IconComponent, InputDirective, SwitcherComponent, SwitcherOption, ToastService } from '@ndwnu/design-system';
@@ -89,6 +89,9 @@ const DETAIL_VARIANT: Variant = {
   styleUrl: './lab-shell.component.scss',
 })
 export class LabShellComponent {
+  readonly #injector = inject(Injector);
+  private readonly switchers = viewChildren(SwitcherComponent);
+
   readonly #store = inject(LabStore);
   readonly #router = inject(Router);
   readonly #toast = inject(ToastService);
@@ -104,6 +107,23 @@ export class LabShellComponent {
     ),
     { initialValue: this.#router.url },
   );
+
+  constructor() {
+    // The switcher only moves its slider on init and on its own clicks; mirror changes that come from the URL or the store.
+    effect(() => {
+      const wanted = [this.activeId(), this.variantValue()];
+      this.switchers();
+      afterNextRender(
+        () => {
+          for (const sw of this.switchers()) {
+            const value = wanted.find((w) => sw.options().some((o) => o.value === w));
+            if (value !== undefined) sw.writeValue(value);
+          }
+        },
+        { injector: this.#injector },
+      );
+    });
+  }
 
   protected readonly activeId = computed<TemplateId>(() => {
     const segment = this.#url().split('?')[0].split('/')[2];
