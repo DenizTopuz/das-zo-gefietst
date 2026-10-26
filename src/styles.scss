@@ -179,3 +179,10 @@ ndw-map-display ndw-map-display-option {
     right: calc(var(--ndw-spacing-2xs) * -1);
   }
 }
+
+// CC-043: the digit in `ndw-badge` sits ~1.1px above the centre of the 20px badge (the text box is 15px
+// high with the glyph in its upper part). 2px padding-top moves the flex-centred content down by 1px.
+// `:not([hidden])` raises specificity above the DS's `:host` rule.
+ndw-badge:not([hidden]) {
+  padding-top: var(--ndw-spacing-3xs);
+}
