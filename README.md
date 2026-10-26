@@ -23,6 +23,10 @@ Elke route toont een kaart over de volle pagina (`MapPageComponent`). Routes en 
 
 De eerdere, volledige pagina's (dashboard, tabel, detail, enzovoort) staan in git-tag `template-v1-paginas`.
 
+## Layout lab
+
+Zes layouttemplates (T1 t/m T6) onder `/layout-lab/t1` … `/layout-lab/t6`. Status, startinstructies en wat nog moet: [LAYOUT-LAB-STATUS.md](LAYOUT-LAB-STATUS.md). T3 en T6 zijn nog niet gebouwd.
+
 ## Componentlogboek
 
 Wijzigingen aan componenten en afwijkingen van het design system staan in [COMPONENT-CHANGELOG.md](COMPONENT-CHANGELOG.md), met een `CC-nnn`-ID en een link naar de bijbehorende NDW Storybook-pagina.

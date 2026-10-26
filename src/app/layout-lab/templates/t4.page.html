@@ -1,0 +1,143 @@
+<app-screen-header title="Locatierecord bewerken">
+  @if (dirty()) {
+    <ndw-pill color="yellow">Concept · niet opgeslagen</ndw-pill>
+  }
+</app-screen-header>
+
+<app-scope-toolbar
+  [(search)]="state.search"
+  searchLabel="Zoek record of validatiefout"
+  placeholder="Zoek record of validatiefout"
+  [showFilters]="false"
+  scope="Midden-Nederland"
+>
+  @if (narrow()) {
+    <div role="group" aria-label="Werkvlak">
+      <ndw-switcher [options]="planeOptions" [selectedValue]="plane()" (selectionChange)="plane.set($any($event))"></ndw-switcher>
+    </div>
+  }
+  <button ndwButton secondary type="button" (click)="newRecord()"><ndw-icon>add</ndw-icon> Nieuw record</button>
+</app-scope-toolbar>
+
+@if (statusKind(); as kind) {
+  <div class="status"><app-status-message [kind]="kind" (retry)="retry()" /></div>
+} @else {
+  <div class="workspace" [class]="'workspace workspace--' + layout() + (showMap() ? '' : ' workspace--no-map')">
+    <aside class="validation" aria-labelledby="t4-val" [hidden]="narrow() && plane() !== 'validatie'">
+      <h2 id="t4-val" class="ndw-heading-sm">Validatie</h2>
+      <p class="ndw-paragraph-md" role="status" aria-live="polite">
+        {{ findings().length }} {{ findings().length === 1 ? 'aandachtspunt' : 'aandachtspunten' }} in dit record
+      </p>
+      <ol class="findings">
+        @for (f of findings(); track f.field) {
+          <li>
+            <button type="button" (click)="goTo(f.field)">
+              <ndw-icon>{{ f.severity === 'Fout' ? 'error' : 'warning' }}</ndw-icon>
+              <span><strong>{{ label(f.field) }}</strong> · {{ f.severity }}<br />{{ f.message }}</span>
+            </button>
+          </li>
+        } @empty {
+          <li class="ndw-paragraph-md ok"><ndw-icon>check_circle</ndw-icon> Geen aandachtspunten.</li>
+        }
+      </ol>
+
+      <h3 class="ndw-heading-sm">Records ({{ recordList().length }})</h3>
+      <ul class="records">
+        @for (r of recordList(); track r.id) {
+          <li>
+            <button type="button" [attr.aria-current]="r.id === currentId() ? 'true' : null" [class.current]="r.id === currentId()" (click)="open(r.id)">
+              <span class="ndw-paragraph-bold-md">{{ r.id }} · {{ r.title || 'Zonder naam' }}</span>
+              <ndw-pill [color]="color(r.status)">{{ r.status }}</ndw-pill>
+            </button>
+          </li>
+        } @empty {
+          <li class="ndw-paragraph-md">Geen records gevonden voor “{{ state.search() }}”.</li>
+        }
+      </ul>
+    </aside>
+
+    @if (showMap()) {
+      <div class="map-pane" [hidden]="narrow() && plane() !== 'kaart'">
+        <app-ndw-map
+          [features]="features()"
+          [kinds]="['locatie']"
+          [defaultVisibleKinds]="['locatie']"
+          [selectedId]="currentId() === 'nieuw' ? null : currentId()"
+          [initialView]="state.mapView()"
+          ariaLabel="Ruimtelijke context van het record"
+          (featureSelected)="open($event)"
+          (mapClicked)="onMapClick($event)"
+          (viewChanged)="state.mapView.set({ center: $event.center, zoom: $event.zoom })"
+        />
+        @if (pickOnMap()) {
+          <p class="pick ndw-paragraph-md" role="status">Klik op de kaart om de locatie te kiezen. Je kunt de coördinaten ook invullen.</p>
+        }
+      </div>
+    }
+
+    <section class="form-pane" aria-labelledby="t4-form-h" [hidden]="narrow() && plane() !== 'formulier'">
+      <form class="form" novalidate (submit)="$event.preventDefault(); save()">
+        <header>
+          <h2 id="t4-form-h" class="ndw-heading-sm">{{ currentTitle() }}</h2>
+          <p class="ndw-paragraph-md">Velden met * zijn verplicht.</p>
+        </header>
+
+        @if (submitted() && errors().length) {
+          <ndw-alert id="t4-summary" type="critical" tabindex="-1" ariaLive="assertive">
+            <strong>Opslaan niet gelukt. {{ errors().length }} {{ errors().length === 1 ? 'veld heeft' : 'velden hebben' }} aandacht nodig.</strong>
+            <ul class="summary">
+              @for (e of errors(); track e.field) {
+                <li><a href="#" (click)="$event.preventDefault(); goTo(e.field)">{{ label(e.field) }}: {{ e.message }}</a></li>
+              }
+            </ul>
+          </ndw-alert>
+        }
+        @if (savedAt() && !dirty()) {
+          <ndw-alert type="info" ariaLive="polite">Opgeslagen om {{ savedAt() }}.</ndw-alert>
+        }
+
+        <ndw-form-field label="Naam *" [error]="errorFor('title')">
+          <input ndwInput data-field="title" type="text" autocomplete="off" aria-required="true" [value]="draft().title" [attr.aria-invalid]="errorFor('title') ? 'true' : null" (input)="set('title', $any($event.target).value)" (blur)="touch('title')" />
+        </ndw-form-field>
+
+        <ndw-form-field label="Type *" [error]="errorFor('type')">
+          <select ndwInput data-field="type" aria-required="true" [attr.aria-invalid]="errorFor('type') ? 'true' : null" (change)="set('type', $any($event.target).value)" (blur)="touch('type')">
+            <option value="" [selected]="!draft().type">Kies een type</option>
+            @for (t of types; track t) {
+              <option [value]="t" [selected]="t === draft().type">{{ t }}</option>
+            }
+          </select>
+        </ndw-form-field>
+
+        <ndw-form-field label="Locatie *" [error]="errorFor('location')" info="Bijvoorbeeld wegnummer en plaatsnaam.">
+          <input ndwInput data-field="location" type="text" autocomplete="off" aria-required="true" [value]="draft().location" [attr.aria-invalid]="errorFor('location') ? 'true' : null" (input)="set('location', $any($event.target).value)" (blur)="touch('location')" />
+        </ndw-form-field>
+
+        <ndw-form-field label="Richting *" [error]="errorFor('direction')">
+          <select ndwInput data-field="direction" aria-required="true" [attr.aria-invalid]="errorFor('direction') ? 'true' : null" (change)="set('direction', $any($event.target).value)" (blur)="touch('direction')">
+            <option value="" [selected]="!draft().direction">Kies een richting</option>
+            @for (d of directions; track d) {
+              <option [value]="d" [selected]="d === draft().direction">{{ d }}</option>
+            }
+          </select>
+        </ndw-form-field>
+
+        <div class="coords">
+          <ndw-form-field label="Breedtegraad *" [error]="errorFor('latitude')">
+            <input ndwInput data-field="latitude" type="text" inputmode="decimal" autocomplete="off" aria-required="true" [value]="draft().latitude" [attr.aria-invalid]="errorFor('latitude') ? 'true' : null" (input)="set('latitude', $any($event.target).value)" (blur)="touch('latitude')" />
+          </ndw-form-field>
+          <ndw-form-field label="Lengtegraad *" [error]="errorFor('longitude')">
+            <input ndwInput data-field="longitude" type="text" inputmode="decimal" autocomplete="off" aria-required="true" [value]="draft().longitude" [attr.aria-invalid]="errorFor('longitude') ? 'true' : null" (input)="set('longitude', $any($event.target).value)" (blur)="touch('longitude')" />
+          </ndw-form-field>
+        </div>
+        @if (showMap()) {
+          <button ndwButton secondary type="button" class="pick-button" [attr.aria-pressed]="pickOnMap()" (click)="pickOnMap.set(!pickOnMap()); narrow() && plane.set('kaart')">
+            <ndw-icon>pin_drop</ndw-icon> {{ pickOnMap() ? 'Kiezen op kaart stoppen' : 'Locatie kiezen op kaart' }}
+          </button>
+        }
+
+        <app-editor-actions [dirty]="dirty()" [savedAt]="savedAt()" (cancel)="cancel()" />
+      </form>
+    </section>
+  </div>
+}

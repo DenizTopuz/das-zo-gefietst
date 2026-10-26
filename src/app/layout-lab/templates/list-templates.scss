@@ -1,0 +1,163 @@
+@use '@ndwnu/design-system/styles/base/typography' as *;
+
+// Shared by the templates that show a results list with docked panels (T1, T5).
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  background: var(--ndw-color-grey-50);
+}
+
+.updated {
+  color: var(--ndw-color-grey-600);
+}
+
+.workspace {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  gap: var(--ndw-spacing-md);
+  min-height: 0;
+  padding: var(--ndw-spacing-md);
+}
+
+.main {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.pane,
+.map-pane {
+  flex: 1 1 0;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--ndw-color-white);
+  border: var(--ndw-border-size-sm) solid var(--ndw-color-grey-200);
+  border-radius: var(--ndw-border-radius-sm);
+  overflow: hidden;
+  position: relative;
+}
+
+.pane > app-results-table,
+.pane > app-status-message,
+.pane > .cards {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: auto;
+}
+
+app-ndw-map {
+  flex: 1 1 0;
+  min-height: 0;
+  border-radius: 0;
+}
+
+.count {
+  flex: none;
+  margin: 0;
+  padding: var(--ndw-spacing-2xs) var(--ndw-spacing-sm);
+  color: var(--ndw-color-grey-600);
+  border-top: var(--ndw-border-size-sm) solid var(--ndw-color-grey-200);
+}
+
+.dock {
+  flex: none;
+  min-height: 0;
+  background: var(--ndw-color-white);
+  border: var(--ndw-border-size-sm) solid var(--ndw-color-grey-200);
+  border-radius: var(--ndw-border-radius-sm);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  &--filters {
+    width: 20rem;
+  }
+
+  &--detail {
+    width: 25rem;
+  }
+
+  &--wide {
+    width: 35rem;
+  }
+}
+
+.overlay {
+  position: absolute;
+  z-index: 5;
+  top: var(--ndw-spacing-md);
+  left: var(--ndw-spacing-md);
+  bottom: var(--ndw-spacing-md);
+  width: min(20rem, calc(100% - 2 * var(--ndw-spacing-md)));
+  background: var(--ndw-color-white);
+  border: var(--ndw-border-size-sm) solid var(--ndw-color-grey-200);
+  border-radius: var(--ndw-border-radius-sm);
+  box-shadow: var(--ndw-elevation-popover);
+  overflow: auto;
+}
+
+.detail-view {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  background: var(--ndw-color-white);
+  border: var(--ndw-border-size-sm) solid var(--ndw-color-grey-200);
+  border-radius: var(--ndw-border-radius-sm);
+  overflow: hidden;
+}
+
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: var(--ndw-spacing-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ndw-spacing-sm);
+}
+
+.card {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ndw-spacing-2xs);
+  padding: var(--ndw-spacing-sm);
+  background: var(--ndw-color-white);
+  border: var(--ndw-border-size-sm) solid var(--ndw-color-grey-300);
+  border-radius: var(--ndw-border-radius-sm);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--ndw-color-grey-100);
+  }
+
+  &--selected {
+    background: var(--ndw-color-info-100);
+    border-color: var(--ndw-color-secondary-500);
+  }
+
+  &:focus-visible {
+    outline: var(--ndw-border-size-md) solid var(--ndw-color-warning-500);
+    outline-offset: var(--ndw-border-size-md);
+  }
+}
+
+@media (max-width: 760px) {
+  .workspace {
+    padding: var(--ndw-spacing-xs);
+  }
+}
