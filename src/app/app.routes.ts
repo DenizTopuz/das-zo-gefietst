@@ -18,6 +18,7 @@ export const routes: Routes = [
   mapPage('wegwerkzaamheden/:id', 'Wegwerkzaamheid', ['roadwork']),
   mapPage('kaart', 'Verkeerskaart'),
   mapPage('maatregelen', 'Maatregelen', ['matrix']),
+  { path: 'werkruimte', title: 'Werkruimte · Template', loadComponent: () => import('./workspace/workspace.page').then((m) => m.WorkspacePage) },
   {
     path: 'layout-lab',
     component: LabShellComponent,

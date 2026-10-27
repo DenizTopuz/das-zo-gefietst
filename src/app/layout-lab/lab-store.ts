@@ -4,7 +4,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import type { MapView } from '../map/ndw-map.component';
 
-export type TemplateId = 't1' | 't2' | 't3' | 't4' | 't5' | 't6';
+export type TemplateId = 't1' | 't2' | 't3' | 't4' | 't5' | 't6' | 'werkruimte';
 export type ViewMode = 'kaart' | 'lijst' | 'beide';
 export type Arrangement = 'onder' | 'naast';
 export type DemoState = 'normaal' | 'laden' | 'fout' | 'geen-data' | 'live';

@@ -11,6 +11,7 @@ const TOP_MENU: MenuItem[] = [
   { label: 'Wegwerkzaamheden', icon: 'construction', path: ['/wegwerkzaamheden'] },
   { label: 'Verkeerskaart', icon: 'map', path: ['/kaart'] },
   { label: 'Maatregelen', icon: 'signpost', path: ['/maatregelen'] },
+  { label: 'Werkruimte', icon: 'view_sidebar', path: ['/werkruimte'] },
   { label: 'Layout lab', icon: 'dashboard_customize', path: ['/layout-lab'] },
 ];
 
