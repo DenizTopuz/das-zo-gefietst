@@ -267,3 +267,13 @@ ndw-layout ndw-main-navigation.expanded[class] {
   top: 1.625rem;
   left: calc(var(--menu-width, 200px) - var(--ndw-spacing-2xl));
 }
+
+// The fold toggle is a neutral control, not a call to action: grey instead of the tertiary button's orange.
+.app-topbar .menu-toggle[ndwButton] {
+  color: var(--ndw-color-grey-700);
+
+  &:hover {
+    color: var(--ndw-color-grey-900);
+    background: var(--ndw-color-grey-100);
+  }
+}
