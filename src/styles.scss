@@ -302,7 +302,10 @@ ndw-layout ndw-main-navigation.expanded[class] {
   }
 }
 
-.app-topbar .sample-data {
+.app-topbar .topbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--ndw-spacing-sm);
   margin-left: auto;
 }
 
@@ -315,4 +318,20 @@ ndw-layout ndw-main-navigation.expanded[class] {
 // Werkruimte (kopie) only: no "Voorbeeldgegevens" marker in the top bar.
 .app-frame:has(app-werkruimte-kopie) .app-topbar .sample-data {
   display: none;
+}
+
+// Werkruimte (kopie) only: a tighter menu header (logo, environment pill) so the menu items start higher.
+ndw-layout:has(app-werkruimte-kopie) ndw-main-navigation-header header.expanded[class] {
+  gap: var(--ndw-spacing-xs);
+  margin-bottom: var(--ndw-spacing-xs);
+  padding-top: var(--ndw-spacing-sm);
+
+  a[href] {
+    gap: var(--ndw-spacing-3xs);
+  }
+}
+
+// ...and the fold toggle follows the logo up.
+.app-frame:has(app-werkruimte-kopie) .app-topbar .menu-toggle--in-menu {
+  top: 0.875rem;
 }

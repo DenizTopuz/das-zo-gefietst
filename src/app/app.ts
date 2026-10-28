@@ -1,8 +1,10 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { ButtonDirective, IconComponent, LayoutComponent, MenuItem, PillComponent, RouterBreadcrumbsComponent } from '@ndwnu/design-system';
 import { filter, map } from 'rxjs';
+import { TopbarSlot } from './shared/topbar-slot.service';
 import { observeTooltipPlacement } from './shared/tooltip-placement';
 
 const TOP_MENU: MenuItem[] = [
@@ -39,7 +41,7 @@ const BOTTOM_MENU: MenuItem[] = [
 
 @Component({
   selector: 'app-root',
-  imports: [ButtonDirective, IconComponent, LayoutComponent, PillComponent, RouterBreadcrumbsComponent, RouterOutlet],
+  imports: [NgTemplateOutlet, ButtonDirective, IconComponent, LayoutComponent, PillComponent, RouterBreadcrumbsComponent, RouterOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <ndw-layout
@@ -59,7 +61,10 @@ const BOTTOM_MENU: MenuItem[] = [
             <ndw-icon>view_sidebar</ndw-icon>
           </button>
           <nav aria-label="Kruimelpad"><ndw-router-breadcrumbs></ndw-router-breadcrumbs></nav>
-          <ndw-pill color="gray" class="sample-data">Voorbeeldgegevens</ndw-pill>
+          <div class="topbar-right">
+            <ng-container [ngTemplateOutlet]="topbar.template()"></ng-container>
+            <ndw-pill color="gray" class="sample-data">Voorbeeldgegevens</ndw-pill>
+          </div>
         </header>
         @if (menuOpen()) {
           <div
@@ -92,6 +97,7 @@ export class App {
 
   /** The menu is folded in and out from the top bar, not from the foot of the menu. */
   protected readonly menuOpen = signal(true);
+  protected readonly topbar = inject(TopbarSlot);
   protected readonly minWidth = 200;
   protected readonly maxWidth = 480;
   protected readonly menuWidth = signal(readWidth());

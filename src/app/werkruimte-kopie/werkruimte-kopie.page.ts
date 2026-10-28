@@ -1,5 +1,6 @@
-import { afterNextRender, ChangeDetectionStrategy, Component, computed, effect, inject, Injector, signal, Signal, untracked, viewChild } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, DestroyRef, TemplateRef, Component, computed, effect, inject, Injector, signal, Signal, untracked, viewChild } from '@angular/core';
 import { ButtonDirective, IconComponent, ToastService } from '@ndwnu/design-system';
+import { TopbarSlot } from '../shared/topbar-slot.service';
 import { MapViewChange, NdwMapComponent } from '../map/ndw-map.component';
 import { LabRecord, Melding, MELDINGEN, MELDING_STATUSSEN, MELDING_TYPEN, pointFeatures, updatedLabel } from '../layout-lab/data/lab-data';
 import { bindUrlState, EMPTY_FILTERS, hostWidth, LabStore } from '../layout-lab/lab-store';
@@ -82,6 +83,7 @@ function readStored(): { panes: PaneFlags; arrangement: 'onder' | 'naast' } {
   selector: 'app-werkruimte-kopie',
   imports: [AnalysisBodyComponent, AnalysisScopeComponent, ButtonDirective, FilterPanelComponent, IconComponent, NdwMapComponent, ObjectDetailComponent, ResultsTableComponent, ScopeToolbarComponent, ScreenHeaderComponent, SplitWorkspaceComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '(document:click)': 'closeViewMenuOutside($event)', '(keydown.escape)': 'viewMenuOpen.set(false)' },
   templateUrl: './werkruimte-kopie.page.html',
   styleUrl: './werkruimte-kopie.page.scss',
 })
@@ -107,6 +109,25 @@ export class WerkruimteKopiePage {
   readonly #lastOpened = signal<PaneId>('detail');
 
   private readonly table = viewChild(ResultsTableComponent);
+  private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
+  readonly #topbar = inject(TopbarSlot);
+  /** The "Weergave" menu in the right half of the top bar. */
+  protected readonly viewMenuOpen = signal(false);
+  protected readonly arrangements = [
+    { value: 'onder' as const, label: 'Onder elkaar', hint: 'Kaart boven, resultaten eronder', icon: 'horizontal_split' },
+    { value: 'naast' as const, label: 'Naast elkaar', hint: 'Kaart en resultaten naast elkaar', icon: 'vertical_split' },
+  ];
+  /** The arrangement only applies while both the map and the results are on and there is room for both. */
+  protected readonly canArrange = computed(() => !this.narrow() && this.panes().map && this.panes().results);
+
+  protected closeViewMenuOutside(event: Event) {
+    if (!(event.target as HTMLElement).closest('.view-menu')) this.viewMenuOpen.set(false);
+  }
+
+  protected pickArrangement(value: 'onder' | 'naast') {
+    this.arrangement.set(value);
+    this.viewMenuOpen.set(false);
+  }
 
   private readonly all = signal<readonly LabRecord[]>(MELDINGEN);
   protected readonly results = createResults<Melding>(this.all as unknown as Signal<readonly Melding[]>, this.state);
@@ -205,6 +226,9 @@ export class WerkruimteKopiePage {
 
   constructor() {
     bindUrlState('werkruimte-kopie', ['id']);
+
+    effect(() => this.#topbar.template.set(this.topbarActions() ?? null));
+    inject(DestroyRef).onDestroy(() => this.#topbar.template.set(null));
 
     effect(() => {
       const stored = { panes: this.panes(), arrangement: this.arrangement() };

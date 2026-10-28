@@ -1,5 +1,29 @@
 <app-screen-header title="Werkruimte (kopie)" />
 
+<ng-template #topbarActions>
+  @if (canArrange()) {
+    <div class="view-menu">
+      <button ndwButton secondary extra-small type="button" aria-haspopup="true" aria-controls="view-menu-panel" [attr.aria-expanded]="viewMenuOpen()" (click)="viewMenuOpen.set(!viewMenuOpen())">
+        <ndw-icon>{{ layout().arrangement === 'naast' ? 'vertical_split' : 'horizontal_split' }}</ndw-icon> Weergave
+        <ndw-icon>{{ viewMenuOpen() ? 'expand_less' : 'expand_more' }}</ndw-icon>
+      </button>
+      @if (viewMenuOpen()) {
+        <div id="view-menu-panel" class="view-menu__panel" role="group" aria-label="Weergave">
+          <p class="view-menu__title ndw-paragraph-sm">Indeling van kaart en resultaten</p>
+          <div class="view-menu__options">
+            @for (a of arrangements; track a.value) {
+              <button type="button" class="view-menu__option" [class.view-menu__option--on]="layout().arrangement === a.value" [attr.aria-pressed]="layout().arrangement === a.value" [attr.title]="a.hint" (click)="pickArrangement(a.value)">
+                <ndw-icon>{{ a.icon }}</ndw-icon>
+                <span class="ndw-paragraph-sm">{{ a.label }}</span>
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</ng-template>
+
 <div class="bar">
   <div class="panes" role="group" aria-label="Panelen in de werkruimte">
     @for (p of panesList; track p.id) {
@@ -9,17 +33,6 @@
       </button>
     }
   </div>
-
-  @if (!narrow() && panes().map && panes().results) {
-    <div class="panes" role="group" aria-label="Indeling van kaart en resultaten">
-      <button type="button" class="pane-toggle" [class.pane-toggle--on]="layout().arrangement === 'onder'" [attr.aria-pressed]="layout().arrangement === 'onder'" (click)="arrangement.set('onder')">
-        <ndw-icon>horizontal_split</ndw-icon><span class="ndw-paragraph-sm">Onder</span>
-      </button>
-      <button type="button" class="pane-toggle" [class.pane-toggle--on]="layout().arrangement === 'naast'" [attr.aria-pressed]="layout().arrangement === 'naast'" (click)="arrangement.set('naast')">
-        <ndw-icon>vertical_split</ndw-icon><span class="ndw-paragraph-sm">Naast</span>
-      </button>
-    </div>
-  }
 
   <label class="preset ndw-paragraph-sm">
     <span>Voorinstelling</span>
