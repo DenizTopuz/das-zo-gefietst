@@ -1,9 +1,11 @@
 <app-screen-header title="Werkruimte (kopie)" />
 
 <ng-template #topbarActions>
-  <button ndwButton tertiary extra-small type="button" class="topbar-icon" aria-label="Details" title="Details van de gekozen melding" [attr.aria-pressed]="pressed('detail')" (click)="toggle('detail')">
-    <ndw-icon>info</ndw-icon>
-  </button>
+  @for (p of panesList; track p.id) {
+    <button ndwButton tertiary extra-small type="button" class="topbar-icon" [attr.aria-label]="p.label" [attr.title]="p.hint" [attr.aria-pressed]="pressed(p.id)" [attr.data-pane-toggle]="p.id" (click)="toggle(p.id)">
+      <ndw-icon>{{ p.icon }}</ndw-icon>
+    </button>
+  }
   @if (canArrange()) {
     <div class="view-menu">
       <button ndwButton tertiary extra-small type="button" class="view-menu__trigger" aria-label="Weergave" title="Weergave" aria-haspopup="true" aria-controls="view-menu-panel" [attr.aria-expanded]="viewMenuOpen()" (click)="viewMenuOpen.set(!viewMenuOpen())">
@@ -25,17 +27,6 @@
     </div>
   }
 </ng-template>
-
-<div class="bar">
-  <div class="panes" role="group" aria-label="Panelen in de werkruimte">
-    @for (p of panesList; track p.id) {
-      <button type="button" class="pane-toggle" [class.pane-toggle--on]="pressed(p.id)" [attr.aria-pressed]="pressed(p.id)" [attr.data-pane-toggle]="p.id" [attr.title]="p.hint" (click)="toggle(p.id)">
-        <ndw-icon>{{ p.icon }}</ndw-icon>
-        <span class="ndw-paragraph-sm">{{ p.label }}</span>
-      </button>
-    }
-  </div>
-</div>
 
 @if (!mapShown()) {
   <app-scope-toolbar [(search)]="state.search" searchLabel="Zoek in meldingen" placeholder="Zoek op naam of ID" [showFilters]="false" />
