@@ -233,11 +233,12 @@ ndw-layout ndw-main-navigation.expanded[class] {
 // Drag handle on the edge between menu and page. At rest only the menu's own thin line shows; on hover,
 // focus or while dragging the line gets thicker and darker and a grip shows that it can be slid.
 .menu-resizer {
-  position: absolute;
+  // Fixed so the grip is not clipped by the scrolling page area; the left edge follows the menu width.
+  position: fixed;
   z-index: 10;
   top: 0;
   bottom: 0;
-  left: -4px;
+  left: calc(var(--menu-width, 200px) - 4px);
   width: 9px;
   cursor: col-resize;
   touch-action: none;
@@ -262,22 +263,31 @@ ndw-layout ndw-main-navigation.expanded[class] {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 1.25rem;
-    height: 2.25rem;
+    gap: var(--ndw-spacing-3xs);
+    width: 3rem;
+    height: 2rem;
     transform: translate(-50%, -50%);
-    color: var(--ndw-color-white);
-    background: var(--ndw-color-grey-600);
+    color: var(--ndw-color-grey-700);
+    background: var(--ndw-color-white);
+    border: var(--ndw-border-size-sm) solid var(--ndw-color-grey-300);
     border-radius: var(--ndw-border-radius-sm);
     opacity: 0;
     transition: opacity 120ms ease-out;
+  }
+
+  &__bar {
+    width: 2px;
+    height: 1rem;
+    background: currentColor;
+    border-radius: 1px;
   }
 
   &:hover,
   &:focus-visible,
   &--active {
     &::before {
-      width: 3px;
-      background: var(--ndw-color-grey-600);
+      width: 2px;
+      background: var(--ndw-color-grey-300);
     }
 
     .menu-resizer__grip {
