@@ -324,7 +324,7 @@ ndw-layout ndw-main-navigation.expanded[class] {
 ndw-layout:has(app-werkruimte-kopie) ndw-main-navigation-header header.expanded[class] {
   gap: var(--ndw-spacing-xs);
   margin-bottom: var(--ndw-spacing-xs);
-  padding-top: var(--ndw-spacing-sm);
+  padding-top: 20px;
 
   a[href] {
     gap: var(--ndw-spacing-3xs);
@@ -333,5 +333,15 @@ ndw-layout:has(app-werkruimte-kopie) ndw-main-navigation-header header.expanded[
 
 // ...and the fold toggle follows the logo up.
 .app-frame:has(app-werkruimte-kopie) .app-topbar .menu-toggle--in-menu {
-  top: 0.875rem;
+  top: 22px;
+}
+
+// Werkruimte (kopie) only: a slimmer top bar.
+.app-frame:has(app-werkruimte-kopie) .app-topbar {
+  min-height: 0;
+  padding-block: var(--ndw-spacing-3xs);
+
+  ndw-breadcrumb-group {
+    padding-block: var(--ndw-spacing-xs);
+  }
 }
