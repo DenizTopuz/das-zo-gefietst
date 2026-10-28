@@ -1,42 +1,33 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { PillComponent } from '@ndwnu/design-system';
 
-/** Compact page header: title, a "Voorbeeldgegevens" marker and optional status or one page action. */
+/**
+ * Page title for assistive technology plus an optional status row. The visible title is the breadcrumb in the
+ * app's top bar, and the "Voorbeeldgegevens" marker lives there as well; only projected content (a status or
+ * one page action) shows as a thin row.
+ */
 @Component({
   selector: 'app-screen-header',
-  imports: [PillComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <header>
-      <h1 class="ndw-heading-md">{{ title() }}</h1>
-      <div class="meta">
-        <ndw-pill color="gray">Voorbeeldgegevens</ndw-pill>
-        <ng-content></ng-content>
-      </div>
-    </header>
+    <h1 class="sr-only">{{ title() }}</h1>
+    <div class="extra"><ng-content></ng-content></div>
   `,
   styles: `
     :host {
       display: block;
-      background: var(--ndw-color-white);
     }
-    header {
+    .extra {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      justify-content: space-between;
-      gap: var(--ndw-spacing-xs) var(--ndw-spacing-md);
-      padding: var(--ndw-spacing-sm) var(--ndw-spacing-md);
+      justify-content: flex-end;
+      gap: var(--ndw-spacing-xs);
+      padding: var(--ndw-spacing-2xs) var(--ndw-spacing-md);
+      background: var(--ndw-color-white);
       border-bottom: var(--ndw-border-size-sm) solid var(--ndw-color-grey-200);
     }
-    h1 {
-      margin: 0;
-    }
-    .meta {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: var(--ndw-spacing-xs);
+    .extra:empty {
+      display: none;
     }
   `,
 })

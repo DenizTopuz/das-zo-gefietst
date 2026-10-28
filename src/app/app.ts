@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { ButtonDirective, IconComponent, LayoutComponent, MenuItem, RouterBreadcrumbsComponent } from '@ndwnu/design-system';
+import { ButtonDirective, IconComponent, LayoutComponent, MenuItem, PillComponent, RouterBreadcrumbsComponent } from '@ndwnu/design-system';
 import { filter, map } from 'rxjs';
 import { observeTooltipPlacement } from './shared/tooltip-placement';
 
@@ -39,7 +39,7 @@ const BOTTOM_MENU: MenuItem[] = [
 
 @Component({
   selector: 'app-root',
-  imports: [ButtonDirective, IconComponent, LayoutComponent, RouterBreadcrumbsComponent, RouterOutlet],
+  imports: [ButtonDirective, IconComponent, LayoutComponent, PillComponent, RouterBreadcrumbsComponent, RouterOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <ndw-layout
@@ -59,6 +59,7 @@ const BOTTOM_MENU: MenuItem[] = [
             <ndw-icon>view_sidebar</ndw-icon>
           </button>
           <nav aria-label="Kruimelpad"><ndw-router-breadcrumbs></ndw-router-breadcrumbs></nav>
+          <ndw-pill color="gray" class="sample-data">Voorbeeldgegevens</ndw-pill>
         </header>
         @if (menuOpen()) {
           <div
