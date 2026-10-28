@@ -13,7 +13,7 @@ const mapPage = (path: string, title: string, kinds?: MapKind[]) => ({
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'template-1' },
   mapPage('template-1', 'Kaartweergave'),
-  { path: 'template-2', title: 'Template 2 · Template', loadComponent: () => import('./workspace/workspace.page').then((m) => m.WorkspacePage) },
+  { path: 'template-2', title: 'Werkruimte · Template', loadComponent: () => import('./workspace/workspace.page').then((m) => m.WorkspacePage) },
   {
     path: 'layout-lab',
     component: LabShellComponent,

@@ -66,7 +66,7 @@ Elk menu-item is één template, zodat ze afzonderlijk kunnen worden opgeschoond
 | Menu | Inhoud | Route |
 | --- | --- | --- |
 | Kaartweergave | Verkeerskaart (alle lagen; verving Dashboard, Incidenten, Wegwerkzaamheden, Verkeerskaart en Maatregelen, die hetzelfde scherm met andere lagen waren) | `/template-1` |
-| Template 2 | Werkruimte | `/template-2` |
+| Werkruimte | Werkruimte | `/template-2` |
 | Template 3 | Layout lab T1 Kaart verkennen | `/layout-lab/t1` |
 | Template 4 | Layout lab T2 Werkvoorraad + kaart | `/layout-lab/t2` |
 | Template 5 | Layout lab T3 Analyse + kaart | `/layout-lab/t3` |
