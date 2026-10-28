@@ -77,9 +77,7 @@ const BOTTOM_MENU: MenuItem[] = [
             (pointercancel)="endDrag($event)"
             (keydown)="resizeByKey($event)"
             (dblclick)="setWidth(200)"
-          >
-            <span class="menu-resizer__grip" aria-hidden="true"><ndw-icon size="sm">chevron_left</ndw-icon><span class="menu-resizer__bar"></span><ndw-icon size="sm">chevron_right</ndw-icon></span>
-          </div>
+          ></div>
         }
         <router-outlet></router-outlet>
       </div>
