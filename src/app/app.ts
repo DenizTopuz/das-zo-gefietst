@@ -17,6 +17,16 @@ const TOP_MENU: MenuItem[] = [
   { label: 'Template 8', icon: 'monitoring', path: ['/layout-lab/t6'] },
 ];
 
+const WIDTH_KEY = 'ndw-menu-width:v1';
+const readWidth = () => {
+  try {
+    const stored = Number(localStorage.getItem(WIDTH_KEY));
+    return stored >= 200 && stored <= 480 ? stored : 200;
+  } catch {
+    return 200;
+  }
+};
+
 const noop = () => {};
 
 // Dummy content to mirror the NDW menu: submenus (children), a notification badge and a user item.
@@ -41,14 +51,34 @@ const BOTTOM_MENU: MenuItem[] = [
       [bottomMenuItems]="bottomMenu"
       [isCollapsible]="false"
       [isExpanded]="menuOpen()"
+      [style.--menu-width.px]="menuWidth()"
     >
       <div class="app-frame">
         <header class="app-topbar">
-          <button ndwButton tertiary extra-small type="button" class="menu-toggle" [attr.aria-expanded]="menuOpen()" aria-label="Menu in- of uitklappen" (click)="menuOpen.set(!menuOpen())">
+          <button ndwButton tertiary extra-small type="button" class="menu-toggle" [class.menu-toggle--in-menu]="menuOpen()" [attr.aria-expanded]="menuOpen()" aria-label="Menu in- of uitklappen" (click)="menuOpen.set(!menuOpen())">
             <ndw-icon>view_sidebar</ndw-icon>
           </button>
           <nav aria-label="Kruimelpad"><ndw-router-breadcrumbs></ndw-router-breadcrumbs></nav>
         </header>
+        @if (menuOpen()) {
+          <div
+            class="menu-resizer"
+            [class.menu-resizer--active]="dragging()"
+            role="separator"
+            aria-orientation="vertical"
+            aria-label="Breedte van het menu"
+            tabindex="0"
+            [attr.aria-valuemin]="minWidth"
+            [attr.aria-valuemax]="maxWidth"
+            [attr.aria-valuenow]="menuWidth()"
+            (pointerdown)="startDrag($event)"
+            (pointermove)="drag($event)"
+            (pointerup)="endDrag($event)"
+            (pointercancel)="endDrag($event)"
+            (keydown)="resizeByKey($event)"
+            (dblclick)="setWidth(200)"
+          ></div>
+        }
         <router-outlet></router-outlet>
       </div>
     </ndw-layout>
@@ -61,6 +91,43 @@ export class App {
 
   /** The menu is folded in and out from the top bar, not from the foot of the menu. */
   protected readonly menuOpen = signal(true);
+  protected readonly minWidth = 200;
+  protected readonly maxWidth = 480;
+  protected readonly menuWidth = signal(readWidth());
+  protected readonly dragging = signal(false);
+
+  protected setWidth(value: number) {
+    const width = Math.round(Math.min(this.maxWidth, Math.max(this.minWidth, value)));
+    this.menuWidth.set(width);
+    try {
+      localStorage.setItem(WIDTH_KEY, String(width));
+    } catch {
+      /* the width just is not remembered */
+    }
+  }
+
+  protected startDrag(event: PointerEvent) {
+    (event.target as HTMLElement).setPointerCapture(event.pointerId);
+    this.dragging.set(true);
+  }
+
+  protected drag(event: PointerEvent) {
+    if (this.dragging()) this.setWidth(event.clientX);
+  }
+
+  protected endDrag(event: PointerEvent) {
+    (event.target as HTMLElement).releasePointerCapture(event.pointerId);
+    this.dragging.set(false);
+  }
+
+  protected resizeByKey(event: KeyboardEvent) {
+    const step = event.shiftKey ? 48 : 16;
+    if (event.key === 'ArrowLeft') this.setWidth(this.menuWidth() - step);
+    else if (event.key === 'ArrowRight') this.setWidth(this.menuWidth() + step);
+    else return;
+    event.preventDefault();
+  }
+
   protected readonly footerTexts = ['Dit is een beta versie', 'Ingelogd onder Nationaal Dataportaal Wegverkeer'];
 
   readonly #router = inject(Router);

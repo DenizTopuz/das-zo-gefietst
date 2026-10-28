@@ -197,24 +197,16 @@ ndw-switcher {
   }
 }
 
-// CC-050: the main menu floats as a rounded card with a shadow, like a side panel, and is folded in and
-// out from the top bar (`app-topbar`) instead of from its own footer. The design system draws the menu as a
-// full-height strip with a border; the values below only change its frame, not its content.
-ndw-layout {
-  background: var(--ndw-color-grey-100);
-}
-
-ndw-layout ndw-main-navigation[class] {
-  box-sizing: border-box;
-  height: calc(100% - 2 * var(--ndw-spacing-sm));
-  margin: var(--ndw-spacing-sm) 0 var(--ndw-spacing-sm) var(--ndw-spacing-sm);
-  border: 0;
-  border-radius: var(--ndw-border-radius-lg);
-  box-shadow: var(--ndw-elevation-popover);
-  overflow: hidden;
+// CC-050: the width of the expanded main menu follows `--menu-width`, which the drag handle on its edge sets
+// (see `app.ts`). The design system fixes the menu at 200px.
+ndw-layout ndw-main-navigation.expanded[class] {
+  flex: none;
+  width: var(--menu-width, 200px);
+  transition: none;
 }
 
 .app-frame {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -235,4 +227,42 @@ ndw-layout ndw-main-navigation[class] {
   .app-topbar .menu-toggle {
     display: none;
   }
+}
+
+// Drag handle on the edge between menu and page; it sits on top of the menu's own border line.
+.menu-resizer {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  bottom: 0;
+  left: -3px;
+  width: 7px;
+  cursor: col-resize;
+  touch-action: none;
+
+  &:hover,
+  &:focus-visible,
+  &--active {
+    background: var(--ndw-color-secondary-500);
+    opacity: 0.6;
+  }
+
+  &:focus-visible {
+    outline: var(--ndw-border-size-md) solid var(--ndw-color-warning-500);
+  }
+}
+
+@media (max-width: 767px) {
+  .menu-resizer {
+    display: none;
+  }
+}
+
+// While the menu is open its fold toggle sits in the menu's header (the top right corner of the menu);
+// when the menu is folded in, the toggle returns to the top bar.
+.app-topbar .menu-toggle--in-menu {
+  position: fixed;
+  z-index: 11;
+  top: var(--ndw-spacing-sm);
+  left: calc(var(--menu-width, 200px) - var(--ndw-spacing-2xl));
 }
