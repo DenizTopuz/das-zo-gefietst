@@ -8,6 +8,7 @@ import { observeTooltipPlacement } from './shared/tooltip-placement';
 const TOP_MENU: MenuItem[] = [
   { label: 'Kaartweergave', icon: 'map', path: ['/template-1'] },
   { label: 'Werkruimte', icon: 'view_sidebar', path: ['/template-2'] },
+  { label: 'Werkruimte (kopie)', icon: 'view_sidebar', path: ['/werkruimte-kopie'] },
   { label: 'Template 3', icon: 'map', path: ['/layout-lab/t1'] },
   { label: 'Template 4', icon: 'table_view', path: ['/layout-lab/t2'] },
   { label: 'Template 5', icon: 'analytics', path: ['/layout-lab/t3'] },

@@ -14,6 +14,7 @@ export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'template-1' },
   mapPage('template-1', 'Kaartweergave'),
   { path: 'template-2', title: 'Werkruimte · Template', loadComponent: () => import('./workspace/workspace.page').then((m) => m.WorkspacePage) },
+  { path: 'werkruimte-kopie', title: 'Werkruimte (kopie) · Template', loadComponent: () => import('./werkruimte-kopie/werkruimte-kopie.page').then((m) => m.WerkruimteKopiePage) },
   {
     path: 'layout-lab',
     component: LabShellComponent,

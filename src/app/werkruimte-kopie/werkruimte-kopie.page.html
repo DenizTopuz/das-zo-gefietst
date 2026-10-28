@@ -1,0 +1,135 @@
+<app-screen-header title="Werkruimte (kopie)" />
+
+<div class="bar">
+  <div class="panes" role="group" aria-label="Panelen in de werkruimte">
+    @for (p of panesList; track p.id) {
+      <button type="button" class="pane-toggle" [class.pane-toggle--on]="pressed(p.id)" [attr.aria-pressed]="pressed(p.id)" [attr.data-pane-toggle]="p.id" [attr.title]="p.hint" (click)="toggle(p.id)">
+        <ndw-icon>{{ p.icon }}</ndw-icon>
+        <span class="ndw-paragraph-sm">{{ p.label }}</span>
+      </button>
+    }
+  </div>
+
+  @if (!narrow() && panes().map && panes().results) {
+    <div class="panes" role="group" aria-label="Indeling van kaart en resultaten">
+      <button type="button" class="pane-toggle" [class.pane-toggle--on]="layout().arrangement === 'onder'" [attr.aria-pressed]="layout().arrangement === 'onder'" (click)="arrangement.set('onder')">
+        <ndw-icon>horizontal_split</ndw-icon><span class="ndw-paragraph-sm">Onder</span>
+      </button>
+      <button type="button" class="pane-toggle" [class.pane-toggle--on]="layout().arrangement === 'naast'" [attr.aria-pressed]="layout().arrangement === 'naast'" (click)="arrangement.set('naast')">
+        <ndw-icon>vertical_split</ndw-icon><span class="ndw-paragraph-sm">Naast</span>
+      </button>
+    </div>
+  }
+
+  <label class="preset ndw-paragraph-sm">
+    <span>Voorinstelling</span>
+    <select aria-label="Voorinstelling voor de panelen" [value]="presetValue()" (change)="applyPreset($any($event.target).value)">
+      @for (p of presets; track p.value) {
+        <option [value]="p.value" [selected]="p.value === presetValue()">{{ p.label }}</option>
+      }
+      @if (presetValue() === 'eigen') {
+        <option value="eigen" selected>Eigen indeling</option>
+      }
+    </select>
+  </label>
+  <button ndwButton secondary extra-small type="button" (click)="resetLayout()"><ndw-icon>restart_alt</ndw-icon> Herstel indeling</button>
+</div>
+
+<app-scope-toolbar [(search)]="state.search" searchLabel="Zoek in meldingen" placeholder="Zoek op naam of ID" [showFilters]="false" scope="Midden-Nederland" />
+
+<p class="sr-only" role="status" aria-live="polite">{{ countText() }}. {{ notice() }}</p>
+@if (notice()) {
+  <p class="notice ndw-paragraph-sm" aria-hidden="true"><ndw-icon size="sm">info</ndw-icon> {{ notice() }}</p>
+}
+
+<div class="workspace">
+  @if (layout().mode.filters !== 'off') {
+    <aside class="side side--left" [class.side--overlay]="layout().mode.filters === 'overlay'" [class.side--full]="layout().mode.filters === 'full'" [style.--side-width]="dock.filters" aria-label="Filters" (keydown.escape)="layout().mode.filters === 'overlay' && close('filters')">
+      <app-filter-panel
+        [groups]="filterGroups"
+        [filters]="state.filters()"
+        [inViewAvailable]="panes().map"
+        scopeText="Deze filters gelden voor de kaart, de resultaten en de aantallen."
+        (filtersChange)="state.filters.set($event)"
+        (closed)="close('filters')"
+      />
+    </aside>
+  }
+
+  @if (layout().mode.analyse !== 'off') {
+    <aside class="side side--left" [class.side--overlay]="layout().mode.analyse === 'overlay'" [class.side--full]="layout().mode.analyse === 'full'" [class.side--grow]="!layout().centerVisible" [style.--side-width]="dock.analyse" aria-label="Analyse" (keydown.escape)="layout().mode.analyse === 'overlay' && close('analyse')">
+      <header class="side-head">
+        <h2 class="ndw-heading-sm">Analyse</h2>
+        <button ndwButton tertiary extra-small type="button" aria-label="Sluit analyse" (click)="close('analyse')"><ndw-icon>close</ndw-icon></button>
+      </header>
+      <div class="side-body">
+        <app-analysis-scope [(period)]="state.period" [(area)]="state.area" [(source)]="state.source" [(compare)]="state.compare" hint="Geldt voor de indicatoren en de trend; filters en kaart blijven ongemoeid." />
+        <app-analysis-body [analysis]="analysis" [state]="state" [kind]="analysis.scoped().length ? null : 'empty'" (clear)="state.area.set('alle')" />
+      </div>
+    </aside>
+  }
+
+  <div class="center" [hidden]="!layout().centerVisible">
+    <app-split-workspace
+      [direction]="layout().direction"
+      [reverse]="layout().arrangement === 'naast'"
+      [(ratio)]="ratio"
+      [show]="layout().centerShow"
+      [min]="25"
+      [max]="75"
+      label="Verdeling tussen kaart en resultaten"
+      firstName="Kaart"
+      secondName="Resultaten"
+      firstId="ws-map-pane"
+      secondId="ws-results-pane"
+    >
+      <div first class="pane-content">
+        <app-ndw-map
+          [features]="features()"
+          [kinds]="['melding']"
+          [defaultVisibleKinds]="['melding']"
+          [selectedId]="state.selectedId()"
+          [initialView]="state.mapView()"
+          ariaLabel="Kaart met meldingen"
+          (featureSelected)="select($event)"
+          (viewChanged)="onView($event)"
+        />
+      </div>
+      <div second class="pane-content">
+        @if (results.filtered().length === 0) {
+          <div class="empty">
+            <p class="ndw-paragraph-lg">Geen meldingen gevonden</p>
+            <p class="ndw-paragraph-md">Pas de zoekopdracht of de filters aan.</p>
+            <button ndwButton secondary type="button" (click)="clearAll()">Wis zoekopdracht en filters</button>
+          </div>
+        } @else {
+          <app-results-table [rows]="results.filtered()" [columns]="columns" [selectedId]="state.selectedId()" [sort]="state.sort()" (sortChange)="state.sort.set($event)" caption="Meldingen" (rowSelected)="select($event)" />
+        }
+        <p class="count ndw-paragraph-sm" aria-hidden="true">{{ countText() }}</p>
+      </div>
+    </app-split-workspace>
+  </div>
+
+  @if (layout().mode.detail !== 'off') {
+    <aside class="side side--right" [class.side--overlay]="layout().mode.detail === 'overlay'" [class.side--full]="layout().mode.detail === 'full'" [class.side--grow]="!layout().centerVisible && layout().mode.analyse === 'off'" [style.--side-width]="dock.detail" aria-label="Details van geselecteerde melding" (keydown.escape)="layout().mode.detail === 'overlay' && close('detail')">
+      @if (detail(); as d) {
+        <app-object-detail [data]="d" [mode]="layout().mode.detail === 'full' ? 'view' : 'dock'" backLabel="resultaten" (closed)="closeDetail()" />
+      } @else {
+        <header class="side-head">
+          <h2 class="ndw-heading-sm">Details</h2>
+          <button ndwButton tertiary extra-small type="button" aria-label="Sluit details" (click)="close('detail')"><ndw-icon>close</ndw-icon></button>
+        </header>
+        <div class="empty">
+          <p class="ndw-paragraph-md">Kies een melding in de tabel of op de kaart om de details te zien.</p>
+        </div>
+      }
+    </aside>
+  }
+
+  @if (!layout().centerVisible && layout().mode.analyse === 'off' && layout().mode.detail === 'off' && layout().mode.filters === 'off') {
+    <div class="empty empty--page">
+      <p class="ndw-paragraph-lg">Er is geen paneel geopend</p>
+      <p class="ndw-paragraph-md">Kies hierboven een paneel, of een voorinstelling.</p>
+    </div>
+  }
+</div>
