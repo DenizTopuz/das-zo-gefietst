@@ -38,10 +38,7 @@ const DETAIL_VARIANT: Variant = {
     <section class="toolbar" aria-label="Layout lab: prototypebediening">
       <div class="row">
         <span class="tag"><ndw-icon>dashboard_customize</ndw-icon> Layout lab · prototype</span>
-        <div class="group" role="group" aria-label="Template kiezen">
-          <ndw-switcher [options]="templateOptions" [selectedValue]="activeId()" (selectionChange)="open($event)"></ndw-switcher>
-        </div>
-        <p class="name" aria-live="polite"><strong>{{ info().code }}</strong> {{ info().name }}</p>
+        <p class="name" aria-live="polite"><strong>Template {{ number() }}</strong> {{ info().name }}</p>
         <button ndwButton tertiary extra-small type="button" class="notes-toggle" [attr.aria-expanded]="notes()" aria-controls="lab-notes" (click)="notes.set(!notes())">
           <ndw-icon>{{ notes() ? 'expand_less' : 'expand_more' }}</ndw-icon> Toelichting
         </button>
@@ -69,7 +66,7 @@ const DETAIL_VARIANT: Variant = {
 
       @if (notes()) {
         <div id="lab-notes" class="notes">
-          <p class="ndw-paragraph-md"><strong>{{ info().code }} · {{ info().name }}.</strong> {{ info().summary }}</p>
+          <p class="ndw-paragraph-md"><strong>Template {{ number() }} · {{ info().name }}.</strong> {{ info().summary }}</p>
           <dl>
             <dt class="ndw-paragraph-bold-md">Kies dit wanneer</dt>
             <dd class="ndw-paragraph-md">{{ info().useWhen }}</dd>
@@ -96,7 +93,6 @@ export class LabShellComponent {
   readonly #router = inject(Router);
   readonly #toast = inject(ToastService);
 
-  protected readonly templateOptions: SwitcherOption[] = TEMPLATES.map((t) => ({ value: t.id, label: t.code }));
   protected readonly demoStates = DEMO_STATES;
   protected readonly notes = signal(false);
 
@@ -129,6 +125,8 @@ export class LabShellComponent {
     const segment = this.#url().split('?')[0].split('/')[2];
     return (templateInfo(segment)?.id ?? 't2') as TemplateId;
   });
+  /** Menu position of the template: the lab templates are Template 7 to 12. */
+  protected readonly number = computed(() => 6 + TEMPLATES.findIndex((t) => t.id === this.info().id) + 1);
   protected readonly info = computed(() => templateInfo(this.activeId()) ?? TEMPLATES[1]);
   readonly #state = computed(() => this.#store.state(this.activeId()));
   protected readonly demo = computed(() => this.#state().demo());
@@ -174,10 +172,6 @@ export class LabShellComponent {
         return '';
     }
   });
-
-  protected open(id: unknown) {
-    void this.#store.open(id as TemplateId);
-  }
 
   protected setVariant(value: unknown) {
     const s = this.#state();

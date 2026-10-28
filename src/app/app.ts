@@ -6,13 +6,18 @@ import { filter, map } from 'rxjs';
 import { observeTooltipPlacement } from './shared/tooltip-placement';
 
 const TOP_MENU: MenuItem[] = [
-  { label: 'Dashboard', icon: 'dashboard', path: ['/dashboard'] },
-  { label: 'Incidenten', icon: 'warning', path: ['/incidenten'] },
-  { label: 'Wegwerkzaamheden', icon: 'construction', path: ['/wegwerkzaamheden'] },
-  { label: 'Verkeerskaart', icon: 'map', path: ['/kaart'] },
-  { label: 'Maatregelen', icon: 'signpost', path: ['/maatregelen'] },
-  { label: 'Werkruimte', icon: 'view_sidebar', path: ['/werkruimte'] },
-  { label: 'Layout lab', icon: 'dashboard_customize', path: ['/layout-lab'] },
+  { label: 'Template 1', icon: 'dashboard', path: ['/template-1'] },
+  { label: 'Template 2', icon: 'warning', path: ['/template-2'] },
+  { label: 'Template 3', icon: 'construction', path: ['/template-3'] },
+  { label: 'Template 4', icon: 'map', path: ['/template-4'] },
+  { label: 'Template 5', icon: 'signpost', path: ['/template-5'] },
+  { label: 'Template 6', icon: 'view_sidebar', path: ['/template-6'] },
+  { label: 'Template 7', icon: 'map', path: ['/layout-lab/t1'] },
+  { label: 'Template 8', icon: 'table_view', path: ['/layout-lab/t2'] },
+  { label: 'Template 9', icon: 'analytics', path: ['/layout-lab/t3'] },
+  { label: 'Template 10', icon: 'edit_note', path: ['/layout-lab/t4'] },
+  { label: 'Template 11', icon: 'view_list', path: ['/layout-lab/t5'] },
+  { label: 'Template 12', icon: 'monitoring', path: ['/layout-lab/t6'] },
 ];
 
 const noop = () => {};
