@@ -59,23 +59,19 @@ git merge ndw-template_v1
 
 Lokale bladwijzer: de tag `template-v1` wijst naar de eerste schone versie van de basis.
 
-## Menu: Template 1 t/m 12
+## Menu: Template 1 t/m 8
 
 Elk menu-item is één template, zodat ze afzonderlijk kunnen worden opgeschoond.
 
-| Menu | Was | Route |
+| Menu | Inhoud | Route |
 | --- | --- | --- |
-| Template 1 | Dashboard | `/template-1` |
-| Template 2 | Incidenten | `/template-2` |
-| Template 3 | Wegwerkzaamheden | `/template-3` (+ `/template-3/:id`) |
-| Template 4 | Verkeerskaart | `/template-4` |
-| Template 5 | Maatregelen | `/template-5` |
-| Template 6 | Werkruimte | `/template-6` |
-| Template 7 | Layout lab T1 Kaart verkennen | `/layout-lab/t1` |
-| Template 8 | Layout lab T2 Werkvoorraad + kaart | `/layout-lab/t2` |
-| Template 9 | Layout lab T3 Analyse + kaart | `/layout-lab/t3` |
-| Template 10 | Layout lab T4 Bewerken + context | `/layout-lab/t4` |
-| Template 11 | Layout lab T5 Overzicht + detail | `/layout-lab/t5` |
-| Template 12 | Layout lab T6 Dashboard zonder kaart | `/layout-lab/t6` |
+| Template 1 | Verkeerskaart (alle lagen; verving Dashboard, Incidenten, Wegwerkzaamheden, Verkeerskaart en Maatregelen, die hetzelfde scherm met andere lagen waren) | `/template-1` |
+| Template 2 | Werkruimte | `/template-2` |
+| Template 3 | Layout lab T1 Kaart verkennen | `/layout-lab/t1` |
+| Template 4 | Layout lab T2 Werkvoorraad + kaart | `/layout-lab/t2` |
+| Template 5 | Layout lab T3 Analyse + kaart | `/layout-lab/t3` |
+| Template 6 | Layout lab T4 Bewerken + context | `/layout-lab/t4` |
+| Template 7 | Layout lab T5 Overzicht + detail | `/layout-lab/t5` |
+| Template 8 | Layout lab T6 Dashboard zonder kaart | `/layout-lab/t6` |
 
-Template 7 t/m 12 staan nog in de prototypebalk van het Layout lab (varianten, demo-toestand, toelichting).
+Template 3 t/m 8 staan nog in de prototypebalk van het Layout lab (varianten, demo-toestand, toelichting).

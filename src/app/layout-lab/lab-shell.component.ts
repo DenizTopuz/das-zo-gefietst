@@ -125,8 +125,8 @@ export class LabShellComponent {
     const segment = this.#url().split('?')[0].split('/')[2];
     return (templateInfo(segment)?.id ?? 't2') as TemplateId;
   });
-  /** Menu position of the template: the lab templates are Template 7 to 12. */
-  protected readonly number = computed(() => 6 + TEMPLATES.findIndex((t) => t.id === this.info().id) + 1);
+  /** Menu position of the template: the lab templates are Template 3 to 8. */
+  protected readonly number = computed(() => 2 + TEMPLATES.findIndex((t) => t.id === this.info().id) + 1);
   protected readonly info = computed(() => templateInfo(this.activeId()) ?? TEMPLATES[1]);
   readonly #state = computed(() => this.#store.state(this.activeId()));
   protected readonly demo = computed(() => this.#state().demo());
