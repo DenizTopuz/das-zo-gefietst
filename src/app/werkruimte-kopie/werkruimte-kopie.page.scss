@@ -92,7 +92,7 @@
   flex: 1 1 0;
   gap: var(--ndw-spacing-md);
   min-height: 0;
-  padding: var(--ndw-spacing-md);
+  padding: 0;
 }
 
 .center {
@@ -229,10 +229,6 @@
 }
 
 @media (max-width: 760px) {
-  .workspace {
-    padding: var(--ndw-spacing-xs);
-  }
-
   .preset {
     margin-left: 0;
   }
@@ -326,7 +322,7 @@
   }
 }
 
-// Label centred at the top of the map: the active scope with the number of reports.
+// Label centred at the top of the map: the active scope with the number of reports. Kept quiet so the map stays the focus.
 .map-label {
   position: absolute;
   z-index: 2;
@@ -335,23 +331,17 @@
   display: flex;
   align-items: center;
   gap: var(--ndw-spacing-xs);
-  padding: var(--ndw-spacing-2xs) var(--ndw-spacing-md) var(--ndw-spacing-2xs) var(--ndw-spacing-2xs);
+  padding: var(--ndw-spacing-2xs) var(--ndw-spacing-sm);
   transform: translateX(-50%);
-  background: var(--ndw-color-white);
-  border: var(--ndw-border-size-sm) solid var(--ndw-color-grey-200);
-  border-radius: 999px;
-  box-shadow: var(--ndw-elevation-popover);
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 0;
+  box-shadow: var(--ndw-elevation-content);
   pointer-events: none;
 
   &__icon {
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    color: var(--ndw-color-white);
-    background: var(--ndw-color-secondary-500);
-    border-radius: 50%;
+    color: var(--ndw-color-grey-500);
   }
 
   &__text {
@@ -361,11 +351,11 @@
   }
 
   &__title {
-    color: var(--ndw-color-text);
+    color: var(--ndw-color-grey-700);
   }
 
   &__meta {
-    color: var(--ndw-color-grey-600);
+    color: var(--ndw-color-grey-500);
   }
 }
 
@@ -386,5 +376,9 @@
 
   ::ng-deep .search {
     max-width: none;
+  }
+
+  ::ng-deep .input-container {
+    border-radius: 0;
   }
 }
