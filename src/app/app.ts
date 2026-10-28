@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { LayoutComponent, MenuItem } from '@ndwnu/design-system';
+import { ButtonDirective, IconComponent, LayoutComponent, MenuItem, RouterBreadcrumbsComponent } from '@ndwnu/design-system';
 import { filter, map } from 'rxjs';
 import { observeTooltipPlacement } from './shared/tooltip-placement';
 
@@ -29,7 +29,7 @@ const BOTTOM_MENU: MenuItem[] = [
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, LayoutComponent],
+  imports: [ButtonDirective, IconComponent, LayoutComponent, RouterBreadcrumbsComponent, RouterOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <ndw-layout
@@ -39,8 +39,18 @@ const BOTTOM_MENU: MenuItem[] = [
       [menuFooterTexts]="footerTexts"
       [topMenuItems]="menu()"
       [bottomMenuItems]="bottomMenu"
+      [isCollapsible]="false"
+      [isExpanded]="menuOpen()"
     >
-      <router-outlet></router-outlet>
+      <div class="app-frame">
+        <header class="app-topbar">
+          <button ndwButton tertiary extra-small type="button" class="menu-toggle" [attr.aria-expanded]="menuOpen()" aria-label="Menu in- of uitklappen" (click)="menuOpen.set(!menuOpen())">
+            <ndw-icon>view_sidebar</ndw-icon>
+          </button>
+          <nav aria-label="Kruimelpad"><ndw-router-breadcrumbs></ndw-router-breadcrumbs></nav>
+        </header>
+        <router-outlet></router-outlet>
+      </div>
     </ndw-layout>
   `,
 })
@@ -49,6 +59,8 @@ export class App {
     observeTooltipPlacement();
   }
 
+  /** The menu is folded in and out from the top bar, not from the foot of the menu. */
+  protected readonly menuOpen = signal(true);
   protected readonly footerTexts = ['Dit is een beta versie', 'Ingelogd onder Nationaal Dataportaal Wegverkeer'];
 
   readonly #router = inject(Router);

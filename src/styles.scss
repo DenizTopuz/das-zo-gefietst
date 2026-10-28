@@ -196,3 +196,43 @@ ndw-switcher {
     white-space: nowrap;
   }
 }
+
+// CC-050: the main menu floats as a rounded card with a shadow, like a side panel, and is folded in and
+// out from the top bar (`app-topbar`) instead of from its own footer. The design system draws the menu as a
+// full-height strip with a border; the values below only change its frame, not its content.
+ndw-layout {
+  background: var(--ndw-color-grey-100);
+}
+
+ndw-layout ndw-main-navigation[class] {
+  box-sizing: border-box;
+  height: calc(100% - 2 * var(--ndw-spacing-sm));
+  margin: var(--ndw-spacing-sm) 0 var(--ndw-spacing-sm) var(--ndw-spacing-sm);
+  border: 0;
+  border-radius: var(--ndw-border-radius-lg);
+  box-shadow: var(--ndw-elevation-popover);
+  overflow: hidden;
+}
+
+.app-frame {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-width: 0;
+}
+
+.app-topbar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--ndw-spacing-xs);
+  min-height: 3rem;
+  padding: var(--ndw-spacing-xs) var(--ndw-spacing-md);
+}
+
+@media (max-width: 767px) {
+  // On a phone the design system shows its own menu header, so the fold toggle is not needed.
+  .app-topbar .menu-toggle {
+    display: none;
+  }
+}

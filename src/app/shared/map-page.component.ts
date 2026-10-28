@@ -19,12 +19,19 @@ import { NdwMapComponent } from '../map/ndw-map.component';
   `,
   styles: `
     :host {
-      display: block;
-      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 0;
+      min-height: 0;
+      padding: 0 var(--ndw-spacing-md) var(--ndw-spacing-md);
     }
 
     app-ndw-map {
-      border-radius: 0;
+      flex: 1 1 0;
+      min-height: 0;
+      border-radius: var(--ndw-border-radius-lg);
+      box-shadow: var(--ndw-elevation-content);
+      overflow: hidden;
     }
   `,
 })
