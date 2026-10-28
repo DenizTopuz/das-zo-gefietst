@@ -93,7 +93,8 @@ export class WerkruimteKopiePage {
   readonly #injector = inject(Injector);
   protected readonly state = this.#store.state('werkruimte-kopie');
   protected readonly width = hostWidth();
-  protected readonly panesList = PANES;
+  /** Details has its own icon in the top bar, so the panel buttons show the other four. */
+  protected readonly panesList = PANES.filter((p) => p.id !== 'detail');
   protected readonly presets = PRESETS;
   protected readonly columns = COLUMNS;
   protected readonly filterGroups = FILTER_GROUPS;
