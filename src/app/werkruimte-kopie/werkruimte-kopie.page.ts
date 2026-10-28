@@ -135,6 +135,8 @@ export class WerkruimteKopiePage {
   protected readonly features = computed(() => pointFeatures(this.results.filtered(), 'melding'));
 
   protected readonly narrow = computed(() => this.width() < NARROW);
+  /** The search field sits on the map; without a visible map it returns above the results. */
+  protected readonly mapShown = computed(() => this.layout().centerVisible && this.layout().centerShow !== 'second');
 
   /** Where every panel goes, given the panels the user switched on and the available width. */
   protected readonly layout = computed(() => {

@@ -34,7 +34,9 @@
   </div>
 </div>
 
-<app-scope-toolbar [(search)]="state.search" searchLabel="Zoek in meldingen" placeholder="Zoek op naam of ID" [showFilters]="false" scope="Midden-Nederland" />
+@if (!mapShown()) {
+  <app-scope-toolbar [(search)]="state.search" searchLabel="Zoek in meldingen" placeholder="Zoek op naam of ID" [showFilters]="false" />
+}
 
 <p class="sr-only" role="status" aria-live="polite">{{ countText() }}. {{ notice() }}</p>
 @if (notice()) {
@@ -83,6 +85,14 @@
       secondId="ws-results-pane"
     >
       <div first class="pane-content">
+        <app-scope-toolbar class="map-search" [(search)]="state.search" searchLabel="Zoek in meldingen" placeholder="Zoek op naam of ID" [showFilters]="false" />
+        <div class="map-label">
+          <span class="map-label__icon"><ndw-icon>location_on</ndw-icon></span>
+          <span class="map-label__text">
+            <span class="map-label__title ndw-paragraph-bold-md">Midden-Nederland</span>
+            <span class="map-label__meta ndw-paragraph-sm">{{ results.filtered().length }} {{ results.filtered().length === 1 ? 'melding' : 'meldingen' }} actief</span>
+          </span>
+        </div>
         <app-ndw-map
           [features]="features()"
           [kinds]="['melding']"

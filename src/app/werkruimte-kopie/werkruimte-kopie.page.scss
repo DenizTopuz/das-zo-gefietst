@@ -18,7 +18,7 @@
   padding: var(--ndw-spacing-xs) var(--ndw-spacing-md);
   margin: var(--ndw-spacing-sm) var(--ndw-spacing-md) 0;
   background: var(--ndw-color-white);
-  border-radius: var(--ndw-border-radius-lg);
+  border-radius: 0;
   box-shadow: var(--ndw-elevation-content);
 }
 
@@ -27,7 +27,7 @@
   gap: var(--ndw-spacing-3xs);
   padding: var(--ndw-spacing-3xs);
   background: var(--ndw-color-grey-100);
-  border-radius: var(--ndw-border-radius-md);
+  border-radius: 0;
 }
 
 .pane-toggle {
@@ -113,13 +113,14 @@
 }
 
 .pane-content {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 0;
   min-width: 0;
   background: var(--ndw-color-white);
-  border-radius: var(--ndw-border-radius-lg);
+  border-radius: 0;
   box-shadow: var(--ndw-elevation-content);
   overflow: hidden;
 
@@ -152,7 +153,7 @@
   display: flex;
   flex-direction: column;
   background: var(--ndw-color-white);
-  border-radius: var(--ndw-border-radius-lg);
+  border-radius: 0;
   box-shadow: var(--ndw-elevation-content);
   overflow: auto;
   animation: panel-in 160ms ease-out;
@@ -322,5 +323,68 @@
       outline: var(--ndw-border-size-md) solid var(--ndw-color-warning-500);
       outline-offset: var(--ndw-border-size-md);
     }
+  }
+}
+
+// Label centred at the top of the map: the active scope with the number of reports.
+.map-label {
+  position: absolute;
+  z-index: 2;
+  top: var(--ndw-spacing-md);
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: var(--ndw-spacing-xs);
+  padding: var(--ndw-spacing-2xs) var(--ndw-spacing-md) var(--ndw-spacing-2xs) var(--ndw-spacing-2xs);
+  transform: translateX(-50%);
+  background: var(--ndw-color-white);
+  border: var(--ndw-border-size-sm) solid var(--ndw-color-grey-200);
+  border-radius: 999px;
+  box-shadow: var(--ndw-elevation-popover);
+  pointer-events: none;
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    color: var(--ndw-color-white);
+    background: var(--ndw-color-secondary-500);
+    border-radius: 50%;
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+
+  &__title {
+    color: var(--ndw-color-text);
+  }
+
+  &__meta {
+    color: var(--ndw-color-grey-600);
+  }
+}
+
+// Search field at the top left of the map.
+.map-search {
+  position: absolute;
+  z-index: 2;
+  top: var(--ndw-spacing-md);
+  left: var(--ndw-spacing-md);
+  width: min(22rem, calc(50% - 8rem));
+  background: transparent;
+  border: 0;
+  box-shadow: var(--ndw-elevation-content);
+
+  ::ng-deep .bar {
+    padding: 0;
+  }
+
+  ::ng-deep .search {
+    max-width: none;
   }
 }
