@@ -253,13 +253,21 @@
 .view-menu {
   position: relative;
 
-  // Neutral icon button, like the fold toggle of the menu.
+  // Larger icon-only button in a light grey from the house style, like the expand control of Claude.
   &__trigger[ndwButton] {
-    color: var(--ndw-color-grey-700);
+    width: 2rem;
+    height: 2rem;
+    color: var(--ndw-color-grey-400);
+
+    ndw-icon {
+      font-size: 1.375rem;
+      width: 1.375rem;
+      height: 1.375rem;
+    }
 
     &:hover,
     &[aria-expanded='true'] {
-      color: var(--ndw-color-grey-900);
+      color: var(--ndw-color-grey-600);
       background: var(--ndw-color-grey-100);
     }
   }
