@@ -203,6 +203,7 @@ ndw-layout ndw-main-navigation.expanded[class] {
   flex: none;
   width: var(--menu-width, 200px);
   transition: none;
+  border-color: var(--ndw-color-grey-200);
 }
 
 .app-frame {
@@ -243,8 +244,7 @@ ndw-layout ndw-main-navigation.expanded[class] {
   &:hover,
   &:focus-visible,
   &--active {
-    background: var(--ndw-color-secondary-500);
-    opacity: 0.6;
+    background: var(--ndw-color-secondary-300);
   }
 
   &:focus-visible {
