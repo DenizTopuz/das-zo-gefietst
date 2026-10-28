@@ -305,3 +305,14 @@ ndw-layout ndw-main-navigation.expanded[class] {
 .app-topbar .sample-data {
   margin-left: auto;
 }
+
+// Werkruimte (kopie) only: the top bar with the breadcrumb is filled with white across the full width.
+.app-frame:has(app-werkruimte-kopie) .app-topbar {
+  background: var(--ndw-color-white);
+  border-bottom: var(--ndw-border-size-sm) solid var(--ndw-color-grey-200);
+}
+
+// Werkruimte (kopie) only: no "Voorbeeldgegevens" marker in the top bar.
+.app-frame:has(app-werkruimte-kopie) .app-topbar .sample-data {
+  display: none;
+}
