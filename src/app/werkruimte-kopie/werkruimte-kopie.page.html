@@ -1,6 +1,9 @@
 <app-screen-header title="Werkruimte (kopie)" />
 
 <ng-template #topbarActions>
+  <button ndwButton tertiary extra-small type="button" class="topbar-icon" aria-label="Details" title="Details van de gekozen melding" [attr.aria-pressed]="pressed('detail')" (click)="toggle('detail')">
+    <ndw-icon>info</ndw-icon>
+  </button>
   @if (canArrange()) {
     <div class="view-menu">
       <button ndwButton tertiary extra-small type="button" class="view-menu__trigger" aria-label="Weergave" title="Weergave" aria-haspopup="true" aria-controls="view-menu-panel" [attr.aria-expanded]="viewMenuOpen()" (click)="viewMenuOpen.set(!viewMenuOpen())">
@@ -112,7 +115,7 @@
             <button ndwButton secondary type="button" (click)="clearAll()">Wis zoekopdracht en filters</button>
           </div>
         } @else {
-          <app-results-table detailIcon="info" [rows]="results.filtered()" [columns]="columns" [selectedId]="state.selectedId()" [sort]="state.sort()" (sortChange)="state.sort.set($event)" caption="Meldingen" (rowSelected)="select($event)" />
+          <app-results-table [rows]="results.filtered()" [columns]="columns" [selectedId]="state.selectedId()" [sort]="state.sort()" (sortChange)="state.sort.set($event)" caption="Meldingen" (rowSelected)="select($event)" />
         }
         <p class="count ndw-paragraph-sm" aria-hidden="true">{{ countText() }}</p>
       </div>

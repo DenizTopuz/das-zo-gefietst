@@ -247,6 +247,24 @@
   }
 }
 
+.topbar-icon[ndwButton] {
+  width: 2rem;
+  height: 2rem;
+  color: var(--ndw-color-grey-400);
+
+  ndw-icon {
+    font-size: 1.375rem;
+    width: 1.375rem;
+    height: 1.375rem;
+  }
+
+  &:hover,
+  &[aria-pressed='true'] {
+    color: var(--ndw-color-grey-600);
+    background: var(--ndw-color-grey-100);
+  }
+}
+
 .view-menu {
   position: relative;
 
@@ -331,10 +349,10 @@
   display: flex;
   align-items: center;
   gap: var(--ndw-spacing-xs);
-  padding: var(--ndw-spacing-2xs) var(--ndw-spacing-sm);
+  padding: var(--ndw-spacing-2xs) var(--ndw-spacing-md) var(--ndw-spacing-2xs) var(--ndw-spacing-sm);
   transform: translateX(-50%);
   background: rgba(255, 255, 255, 0.85);
-  border-radius: 0;
+  border-radius: 999px;
   box-shadow: var(--ndw-elevation-content);
   pointer-events: none;
 

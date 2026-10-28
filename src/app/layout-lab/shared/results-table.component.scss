@@ -84,33 +84,3 @@ button.row-link {
     color: var(--ndw-color-grey-600);
   }
 }
-
-.first-cell {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--ndw-spacing-xs);
-}
-
-button.detail-link {
-  all: unset;
-  box-sizing: border-box;
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  color: var(--ndw-color-grey-500);
-  cursor: pointer;
-
-  &:hover {
-    color: var(--ndw-color-grey-700);
-    background: var(--ndw-color-grey-100);
-  }
-
-  &:focus-visible {
-    outline: var(--ndw-border-size-md) solid var(--ndw-color-warning-500);
-    outline-offset: var(--ndw-border-size-md);
-  }
-}
