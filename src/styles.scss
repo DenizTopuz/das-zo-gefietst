@@ -263,6 +263,7 @@ ndw-layout ndw-main-navigation.expanded[class] {
 .app-topbar .menu-toggle--in-menu {
   position: fixed;
   z-index: 11;
-  top: var(--ndw-spacing-sm);
+  // Level with the "ndw" mark of the logo in the menu header.
+  top: 1.625rem;
   left: calc(var(--menu-width, 200px) - var(--ndw-spacing-2xl));
 }
