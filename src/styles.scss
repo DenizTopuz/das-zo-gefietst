@@ -338,7 +338,8 @@ ndw-layout:has(app-werkruimte-kopie) ndw-main-navigation-header header.expanded[
 
 // Werkruimte (kopie) only: a slimmer top bar.
 .app-frame:has(app-werkruimte-kopie) .app-topbar {
-  min-height: 0;
+  // The fold toggle sits at 22px with a height of 24px; this height centres the breadcrumb on it.
+  min-height: 64px;
   padding-block: var(--ndw-spacing-3xs);
 
   ndw-breadcrumb-group {
