@@ -112,7 +112,7 @@
             <button ndwButton secondary type="button" (click)="clearAll()">Wis zoekopdracht en filters</button>
           </div>
         } @else {
-          <app-results-table [rows]="results.filtered()" [columns]="columns" [selectedId]="state.selectedId()" [sort]="state.sort()" (sortChange)="state.sort.set($event)" caption="Meldingen" (rowSelected)="select($event)" />
+          <app-results-table detailIcon="info" [rows]="results.filtered()" [columns]="columns" [selectedId]="state.selectedId()" [sort]="state.sort()" (sortChange)="state.sort.set($event)" caption="Meldingen" (rowSelected)="select($event)" />
         }
         <p class="count ndw-paragraph-sm" aria-hidden="true">{{ countText() }}</p>
       </div>

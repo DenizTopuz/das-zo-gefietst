@@ -50,12 +50,19 @@ export interface TableColumn<T extends LabRecord> {
               @for (col of visibleColumns(); track col.key; let first = $first) {
                 <td>
                   @if (first) {
-                    <button type="button" class="row-link" [attr.aria-current]="row.id === selectedId() ? 'true' : null" (click)="$event.stopPropagation(); rowSelected.emit(row.id)">
-                      <span class="primary">{{ col.text(row) }}</span>
-                      @if (col.sub) {
-                        <span class="sub">{{ col.sub(row) }}</span>
+                    <div class="first-cell">
+                      <button type="button" class="row-link" [attr.aria-current]="row.id === selectedId() ? 'true' : null" (click)="$event.stopPropagation(); rowSelected.emit(row.id)">
+                        <span class="primary">{{ col.text(row) }}</span>
+                        @if (col.sub) {
+                          <span class="sub">{{ col.sub(row) }}</span>
+                        }
+                      </button>
+                      @if (detailIcon(); as icon) {
+                        <button type="button" class="detail-link" [attr.aria-label]="'Details van ' + col.text(row)" [attr.title]="'Details van ' + col.text(row)" (click)="$event.stopPropagation(); rowSelected.emit(row.id)">
+                          <ndw-icon size="sm">{{ icon }}</ndw-icon>
+                        </button>
                       }
-                    </button>
+                    </div>
                   } @else if (col.kind === 'status') {
                     <ndw-pill [color]="color(col.text(row))">{{ col.text(row) }}</ndw-pill>
                   } @else {
@@ -76,6 +83,8 @@ export class ResultsTableComponent<T extends LabRecord> {
   readonly columns = input.required<readonly TableColumn<T>[]>();
   readonly selectedId = input<string | null>(null);
   readonly caption = input('Resultaten');
+  /** Icon of an extra button next to the first cell that opens the details of the row (off by default). */
+  readonly detailIcon = input<string | null>(null);
   readonly sort = model.required<Sort>();
   readonly rowSelected = output<string>();
 
