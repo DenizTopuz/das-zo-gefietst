@@ -6,7 +6,7 @@ import { filter, map } from 'rxjs';
 import { observeTooltipPlacement } from './shared/tooltip-placement';
 
 const TOP_MENU: MenuItem[] = [
-  { label: 'Template 1', icon: 'map', path: ['/template-1'] },
+  { label: 'Kaartweergave', icon: 'map', path: ['/template-1'] },
   { label: 'Template 2', icon: 'view_sidebar', path: ['/template-2'] },
   { label: 'Template 3', icon: 'map', path: ['/layout-lab/t1'] },
   { label: 'Template 4', icon: 'table_view', path: ['/layout-lab/t2'] },
