@@ -342,6 +342,7 @@ ndw-layout:has(app-werkruimte-kopie) ndw-main-navigation-header header.expanded[
   padding-block: var(--ndw-spacing-3xs);
 
   ndw-breadcrumb-group {
-    padding-block: var(--ndw-spacing-xs);
+    padding-block: 12px;
+    padding-left: 0;
   }
 }
