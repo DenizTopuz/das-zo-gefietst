@@ -253,6 +253,17 @@
 .view-menu {
   position: relative;
 
+  // Neutral icon button, like the fold toggle of the menu.
+  &__trigger[ndwButton] {
+    color: var(--ndw-color-grey-700);
+
+    &:hover,
+    &[aria-expanded='true'] {
+      color: var(--ndw-color-grey-900);
+      background: var(--ndw-color-grey-100);
+    }
+  }
+
   &__panel {
     position: absolute;
     z-index: 20;

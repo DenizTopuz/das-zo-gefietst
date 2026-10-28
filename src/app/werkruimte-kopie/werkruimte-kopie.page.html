@@ -3,9 +3,8 @@
 <ng-template #topbarActions>
   @if (canArrange()) {
     <div class="view-menu">
-      <button ndwButton secondary extra-small type="button" aria-haspopup="true" aria-controls="view-menu-panel" [attr.aria-expanded]="viewMenuOpen()" (click)="viewMenuOpen.set(!viewMenuOpen())">
-        <ndw-icon>{{ layout().arrangement === 'naast' ? 'vertical_split' : 'horizontal_split' }}</ndw-icon> Weergave
-        <ndw-icon>{{ viewMenuOpen() ? 'expand_less' : 'expand_more' }}</ndw-icon>
+      <button ndwButton tertiary extra-small type="button" class="view-menu__trigger" aria-label="Weergave" title="Weergave" aria-haspopup="true" aria-controls="view-menu-panel" [attr.aria-expanded]="viewMenuOpen()" (click)="viewMenuOpen.set(!viewMenuOpen())">
+        <ndw-icon>{{ layout().arrangement === 'naast' ? 'vertical_split' : 'horizontal_split' }}</ndw-icon>
       </button>
       @if (viewMenuOpen()) {
         <div id="view-menu-panel" class="view-menu__panel" role="group" aria-label="Weergave">
