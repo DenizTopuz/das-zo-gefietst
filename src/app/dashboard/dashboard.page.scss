@@ -9,42 +9,8 @@
   --accent: var(--ndw-color-secondary-500);
   --accent-soft: var(--ndw-color-secondary-100);
   --ink: var(--ndw-color-grey-700);
-  --line: var(--ndw-color-grey-200);
+  --line: var(--ndw-color-grey-200); // dezelfde grijze rand als het menu en de bovenbalk
   --muted: var(--ndw-color-grey-500);
-}
-
-// Filterbalk: velden van het ontwerpsysteem (datepicker, switcher, select)
-.filters {
-  flex: none;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: var(--ndw-spacing-sm) var(--ndw-spacing-lg);
-  padding: var(--ndw-spacing-sm) var(--ndw-spacing-md);
-  background: var(--ndw-color-white);
-}
-
-.filters .demodata {
-  margin-left: auto;
-}
-
-.date {
-  display: flex;
-  align-items: flex-end;
-  gap: var(--ndw-spacing-3xs);
-
-  ndw-form-field {
-    width: 13rem;
-  }
-
-  &__steps {
-    display: flex;
-    padding-bottom: 2px;
-  }
-}
-
-.filters ndw-form-field select {
-  min-width: 9rem;
 }
 
 // Kaart en detailpaneel
@@ -71,7 +37,7 @@
 .hint,
 .banner {
   position: absolute;
-  top: var(--ndw-spacing-md);
+  bottom: var(--ndw-spacing-md);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -135,11 +101,11 @@
 // Detailpaneel
 .panel {
   flex: none;
-  width: 24rem;
+  width: 26rem;
   display: flex;
   flex-direction: column;
-  gap: var(--ndw-spacing-sm);
-  padding: var(--ndw-spacing-md);
+  gap: var(--ndw-spacing-md);
+  padding: var(--ndw-spacing-lg);
   overflow-y: auto;
   border-left: var(--ndw-border-size-sm) solid var(--line);
   background: var(--ndw-color-white);
@@ -159,6 +125,31 @@
     justify-content: space-between;
     gap: var(--ndw-spacing-sm);
   }
+
+  &__title {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ndw-spacing-xs);
+    min-width: 0;
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ndw-spacing-2xs) var(--ndw-spacing-xs);
+  }
+}
+
+// Kaarten in het paneel: rustig omlijnd met ruime marges
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ndw-spacing-sm);
+  padding: var(--ndw-spacing-md);
+  border: var(--ndw-border-size-sm) solid var(--line);
+  border-radius: var(--ndw-border-radius-sm);
+  background: var(--ndw-color-white);
 }
 
 .meta,
@@ -171,7 +162,16 @@
 .period {
   display: flex;
   align-items: center;
-  gap: var(--ndw-spacing-3xs);
+  gap: var(--ndw-spacing-xs);
+  padding: var(--ndw-spacing-xs) var(--ndw-spacing-sm) var(--ndw-spacing-xs) 0;
+  color: var(--ink);
+  background: var(--ndw-color-grey-50);
+  border-radius: 0;
+
+  ndw-icon {
+    flex: none;
+    color: var(--muted);
+  }
 }
 
 .note {
@@ -198,11 +198,14 @@
 .kpis {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--ndw-spacing-sm);
+  gap: var(--ndw-spacing-md);
 }
 
 .kpi {
-  padding: var(--ndw-spacing-xs) var(--ndw-spacing-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ndw-spacing-3xs);
+  padding: var(--ndw-spacing-md);
   border: var(--ndw-border-size-sm) solid var(--line);
   border-radius: var(--ndw-border-radius-sm);
   background: var(--ndw-color-white);
@@ -211,9 +214,9 @@
   &__value {
     margin: 0;
     font-family: var(--ndw-font-family-heading);
-    font-size: 1.75rem;
+    font-size: 2.25rem;
     font-weight: var(--ndw-font-weight-bold);
-    line-height: 1.2;
+    line-height: 1.15;
     color: var(--ink);
   }
 
@@ -223,8 +226,76 @@
     color: var(--muted);
   }
 
-  &__label {
+  &__label,
+  &__sub {
     margin: 0;
+  }
+
+  &__sub {
+    color: var(--muted);
+  }
+}
+
+// Verdeling over richting A en B
+.share {
+  display: flex;
+  height: 0.75rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--ndw-color-grey-100);
+
+  &__a {
+    background: var(--accent);
+  }
+
+  &__b {
+    flex: 1;
+    background: var(--ndw-color-secondary-300, #a3ccee);
+  }
+}
+
+.dirs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ndw-spacing-3xs);
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: center;
+    gap: var(--ndw-spacing-xs);
+    padding: var(--ndw-spacing-2xs) var(--ndw-spacing-xs) var(--ndw-spacing-2xs) 0;
+  }
+
+  &__on {
+    background: var(--ndw-color-grey-50);
+    font-weight: 700;
+  }
+
+  &__dot {
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+
+    &--a {
+      background: var(--accent);
+    }
+
+    &--b {
+      background: var(--ndw-color-secondary-300, #a3ccee);
+    }
+  }
+
+  &__n {
+    text-align: right;
+  }
+
+  &__v {
+    min-width: 5rem;
+    text-align: right;
+    color: var(--muted);
   }
 }
 
@@ -300,13 +371,6 @@
       opacity: 0.75;
     }
   }
-}
-
-.steps {
-  padding-left: var(--ndw-spacing-lg);
-  display: flex;
-  flex-direction: column;
-  gap: var(--ndw-spacing-2xs);
 }
 
 .roads {
@@ -400,12 +464,31 @@
 }
 
 // Zoekveld linksboven op de kaart, zoals in Werkruimte (kopie).
-.map-search {
+.map-top {
   position: absolute;
-  z-index: 2;
+  z-index: 5;
   top: var(--ndw-spacing-md);
   left: var(--ndw-spacing-md);
-  width: min(22rem, calc(50% - 8rem));
+  right: var(--ndw-spacing-md);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--ndw-spacing-sm);
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+
+  .demodata {
+    margin-left: auto;
+  }
+}
+
+.map-search {
+  position: relative;
+  flex: 0 1 22rem;
+  min-width: 14rem;
   background: transparent;
   border: 0;
   border-radius: var(--ndw-border-radius-sm);
@@ -420,6 +503,8 @@
   }
 
   ::ng-deep .input-container {
+    height: 3.625rem; // gelijk aan de hoogte van de filterbalk (56px + rand)
+    border-color: var(--line);
     border-radius: var(--ndw-border-radius-sm);
   }
 
@@ -625,4 +710,43 @@
     background: var(--ndw-color-grey-50);
     font-weight: 700;
   }
+}
+
+// "Geen resultaten gevonden" van de autosuggest pas tonen als de zoekdienst echt niets teruggaf.
+::ng-deep body.fiets-active.fiets-search-idle .cdk-overlay-container .ndw-autosuggest-panel:has(.ndw-autosuggest-panel__empty) {
+  display: none;
+}
+
+
+// Wis-knop in het paneel: alleen het icoon, zonder kader
+.panel__close {
+  flex: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  color: var(--ndw-color-primary-500);
+
+  ndw-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 1.75rem;
+  }
+
+  &:hover {
+    background: var(--ndw-color-grey-100);
+  }
+}
+
+// Rondleiding: onzichtbaar ankerpunt in het midden van de kaart, waar de gekozen wegvak komt te staan
+.tour-anchor {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.helpbtn {
+  height: 3.625rem; // gelijk aan zoekveld en filterbalk
 }

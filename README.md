@@ -85,8 +85,9 @@ Interactief prototype voor de verkenning van fietsdata per wegvak in Dexter. All
 - **Kaart:** alle wegvakken van het Nationaal Wegenbestand (klasse 3 t/m 7, geen snelwegen) uit de NDW-basiskaart zijn klikbaar. Het gekozen wegvak wordt lichtblauw, de rest is een neutrale omlijning.
 - **Filterbalk:** datum, tijd (één uur of een reeks) en richting (beide, A heen, B terug) in één samengestelde balk.
 - **Zoeken:** op naam of NWB-nummer, met autosuggest van het ontwerpsysteem. De suggesties komen uit de open Locatieserver van PDOK; de zoektekst wordt dus naar PDOK gestuurd.
-- **Rechterpaneel:** aantal fietsers (alle fietstypen), harmonisch gemiddelde snelheid (bij meerdere uren gewogen naar aantallen, voorlopige keuze), verdeling over richting A en B en grafieken per uur.
-- **Toestanden:** start (nog niets gekozen), geen data (datum of wegvak buiten de demodata), nul fietsers en normaal. Voorbeeldwegvakken in het paneel laten de toestanden zien.
+- **Rondleiding:** nieuwe gebruikers krijgen vanzelf een guided tour van het ontwerpsysteem. De eerste stap kiest zelf een wegvak, zodat meteen te zien is wat selecteren doet. Opnieuw starten kan met de helpknop rechtsboven op de kaart.
+- **Rechterpaneel:** verschijnt pas bij een gekozen wegvak. Het toont het aantal fietsers (alle fietstypen), harmonisch gemiddelde snelheid (bij meerdere uren gewogen naar aantallen, voorlopige keuze), verdeling over richting A en B en grafieken per uur.
+- **Toestanden:** start (nog niets gekozen, met een melding onderaan de kaart die voordoet wat te doen), geen data (datum of wegvak buiten de demodata), nul fietsers en normaal.
 - **Gegevensvorm:** de demodata volgt de vorm van de bron (`road_section_id`, per uur en per richting `intensity` en `harmonic_mean_speed_kph`). `speed_cat` is nog niet uitgewerkt; alle fietsers worden samen getoond.
 - **Niet opgenomen:** herkomst en bestemming, tijdlijn onder de kaart, ongevallen, onderscheid naar fietstype en individuele ritten.
 

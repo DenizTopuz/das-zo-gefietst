@@ -1,10 +1,5 @@
 <app-screen-header title="Fietsdata" />
 
-<div class="filters">
-  <app-fiets-filterbar [(date)]="date" [(hour0)]="hour0" [(hour1)]="hour1" [(hourMode)]="hourMode" [(direction)]="direction" />
-  <ndw-pill class="demodata" color="yellow" title="Alle gegevens op deze pagina zijn fictief">Demodata</ndw-pill>
-</div>
-
 <div class="main">
   <section class="stage">
     <div class="mapwrap">
@@ -15,16 +10,22 @@
         (hovered)="onHover($event)"
       />
 
-      <div class="map-search" role="search">
-        <ndw-form-field label="Zoek een wegvak" [hideLabel]="true">
-          <input ndwInput type="search" placeholder="Zoek op naam of ID" [formControl]="searchControl" [ndwAutosuggest]="panel" (input)="onType($any($event.target).value)" (keydown.enter)="search()" />
-        </ndw-form-field>
-        <ndw-autosuggest #panel [options]="options()" [customSearch]="anyMatch" (optionSelected)="chooseOption($event)">
-          @for (option of panel.slicedOptions(); track option.value) {
-            <ndw-autosuggest-option [value]="option" [label]="option.label" [icon]="option.icon" [searchTerm]="panel.searchTerm()"></ndw-autosuggest-option>
-          }
-        </ndw-autosuggest>
+      <div class="map-top">
+        <div class="map-search" role="search">
+          <ndw-form-field label="Zoek een wegvak" [hideLabel]="true">
+            <input ndwInput type="search" placeholder="Zoek op naam of ID" [formControl]="searchControl" [ndwAutosuggest]="panel" (input)="onType($any($event.target).value)" (keydown.enter)="search()" />
+          </ndw-form-field>
+          <ndw-autosuggest #panel [options]="options()" [customSearch]="anyMatch" (optionSelected)="chooseOption($event)">
+            @for (option of panel.slicedOptions(); track option.value) {
+              <ndw-autosuggest-option [value]="option" [label]="option.label" [icon]="option.icon" [searchTerm]="panel.searchTerm()"></ndw-autosuggest-option>
+            }
+          </ndw-autosuggest>
+        </div>
+        <app-fiets-filterbar [(date)]="date" [(hour0)]="hour0" [(hour1)]="hour1" [(hourMode)]="hourMode" [(direction)]="direction" />
+        <ndw-pill class="demodata" color="yellow" title="Alle gegevens op deze pagina zijn fictief">Demodata</ndw-pill>
+        <button ndwButton secondary type="button" class="helpbtn" aria-label="Rondleiding starten" title="Rondleiding starten" (click)="tour.startTour({ skipStorageCheck: true })"><ndw-icon>help</ndw-icon></button>
       </div>
+      <div class="tour-anchor" aria-hidden="true"></div>
       @if (notFound()) {
         <p class="map-search__none ndw-paragraph-sm" role="status">Niets gevonden voor deze zoekopdracht. Probeer een straatnaam, plaats of NWB-nummer.</p>
       }
@@ -60,22 +61,32 @@
 
   </section>
 
+  @if (segment(); as seg) {
   <aside class="panel" aria-label="Details van het geselecteerde wegvak">
-    @if (segment(); as seg) {
       <header class="panel__head">
-        <div>
-          <h2 class="ndw-heading-sm">{{ seg.name }}</h2>
-          <p class="meta ndw-paragraph-sm">{{ seg.place ? seg.place + ' · ' : '' }}NWB {{ seg.id }} · {{ typeLabels[seg.type] }}</p>
+        <div class="panel__title">
+          <h2 class="ndw-heading-md">{{ seg.name }}</h2>
+          <div class="panel__tags">
+            @if (seg.place) {
+              <ndw-pill color="gray">{{ seg.place }}</ndw-pill>
+            }
+            <ndw-pill color="gray">{{ typeLabels[seg.type] }}</ndw-pill>
+            <span class="meta ndw-paragraph-sm">NWB {{ seg.id }}</span>
+          </div>
         </div>
-        <button ndwButton secondary extra-small type="button" aria-label="Selectie wissen" title="Selectie wissen" (click)="clearSelection()"><ndw-icon>close</ndw-icon></button>
+        <button ndwButton tertiary type="button" class="panel__close" aria-label="Selectie wissen" title="Selectie wissen" (click)="clearSelection()"><ndw-icon>close</ndw-icon></button>
       </header>
-      <p class="period ndw-paragraph-sm"><ndw-icon size="sm">schedule</ndw-icon> {{ dateText() }} · {{ selection() }}</p>
+
+      <p class="period ndw-paragraph-md">
+        <ndw-icon>schedule</ndw-icon>
+        <span>{{ dateText() }} · {{ selection() }} · {{ directionLabel() }}</span>
+      </p>
 
       @if (status() === 'geen-data') {
         <ndw-alert type="info-grey">
           <div class="alert__body">
             <p class="alert__title">Geen data</p>
-              <p>{{ noDataText() }} Kies een andere datum of een ander wegvak.</p>
+            <p>{{ noDataText() }} Kies een andere datum of een ander wegvak.</p>
           </div>
         </ndw-alert>
       } @else {
@@ -87,91 +98,93 @@
             </div>
           </ndw-alert>
         }
+
         <div class="kpis">
           <div class="kpi">
+            <p class="kpi__label ndw-paragraph-sm">Fietsers{{ nHours() > 1 ? ' in totaal' : '' }}</p>
             <p class="kpi__value">{{ nl(summary()!.total) }}</p>
-            <p class="kpi__label ndw-paragraph-sm">
-              fietsers{{ nHours() > 1 ? ' in totaal' : ' in dit uur' }}
-              @if (nHours() > 1) { <br />gemiddeld {{ nl(summary()!.total / nHours()) }} per uur }
-            </p>
+            <p class="kpi__sub ndw-paragraph-sm">{{ nHours() > 1 ? 'gemiddeld ' + nl(summary()!.total / nHours()) + ' per uur' : 'in dit uur' }}</p>
           </div>
           <div class="kpi">
+            <p class="kpi__label ndw-paragraph-sm">Snelheid</p>
             <p class="kpi__value">{{ summary()!.avgSpeed ? nl(summary()!.avgSpeed!, 1) : '–' }}<span class="kpi__unit"> km/u</span></p>
-            <p class="kpi__label ndw-paragraph-sm">{{ nHours() > 1 ? 'harmonisch gemiddelde snelheid' : 'gemiddelde snelheid' }}</p>
+            <p class="kpi__sub ndw-paragraph-sm">{{ nHours() > 1 ? 'harmonisch gemiddelde' : 'gemiddeld' }}</p>
           </div>
         </div>
+
         @if (split(); as sp) {
-          <table class="split ndw-paragraph-sm">
-            <caption class="sr-only">Verdeling over de twee richtingen</caption>
-            <thead>
-              <tr><th scope="col">Richting</th><th scope="col">Fietsers</th><th scope="col">Snelheid</th></tr>
-            </thead>
-            <tbody>
-              <tr [class.split__on]="direction() === 'a'"><th scope="row">A (heen)</th><td>{{ nl(sp.a.total) }}</td><td>{{ sp.a.avgSpeed ? nl(sp.a.avgSpeed, 1) + ' km/u' : '–' }}</td></tr>
-              <tr [class.split__on]="direction() === 'b'"><th scope="row">B (terug)</th><td>{{ nl(sp.b.total) }}</td><td>{{ sp.b.avgSpeed ? nl(sp.b.avgSpeed, 1) + ' km/u' : '–' }}</td></tr>
-            </tbody>
-          </table>
+          <section class="card" aria-labelledby="split-title">
+            <h3 id="split-title" class="ndw-heading-xs">Richting</h3>
+            @if (sp.a.total + sp.b.total > 0) {
+              <div class="share" role="img" [attr.aria-label]="'Richting A ' + pct(sp.a.total / (sp.a.total + sp.b.total)) + ', richting B ' + pct(sp.b.total / (sp.a.total + sp.b.total))">
+                <span class="share__a" [style.width.%]="(sp.a.total / (sp.a.total + sp.b.total)) * 100"></span>
+                <span class="share__b"></span>
+              </div>
+            }
+            <ul class="dirs">
+              <li [class.dirs__on]="direction() === 'a'">
+                <span class="dirs__dot dirs__dot--a" aria-hidden="true"></span>
+                <span class="dirs__name ndw-paragraph-md">A (heen)</span>
+                <span class="dirs__n ndw-paragraph-md">{{ nl(sp.a.total) }}</span>
+                <span class="dirs__v ndw-paragraph-sm">{{ sp.a.avgSpeed ? nl(sp.a.avgSpeed, 1) + ' km/u' : '–' }}</span>
+              </li>
+              <li [class.dirs__on]="direction() === 'b'">
+                <span class="dirs__dot dirs__dot--b" aria-hidden="true"></span>
+                <span class="dirs__name ndw-paragraph-md">B (terug)</span>
+                <span class="dirs__n ndw-paragraph-md">{{ nl(sp.b.total) }}</span>
+                <span class="dirs__v ndw-paragraph-sm">{{ sp.b.avgSpeed ? nl(sp.b.avgSpeed, 1) + ' km/u' : '–' }}</span>
+              </li>
+            </ul>
+          </section>
         }
+
         @if (nHours() > 1) {
           <p class="note ndw-paragraph-sm"><ndw-icon size="sm">info</ndw-icon> Voorlopige ontwerpkeuze: bij meerdere uren tonen we het totaal aantal fietsers en het harmonisch gemiddelde van de snelheid, gewogen naar aantallen.</p>
         }
 
         @if (intensityChart(); as ic) {
-          <h3 class="ndw-heading-xs">Intensiteit per uur</h3>
-          <p class="note ndw-paragraph-sm">Klik op een staaf om het uur te kiezen{{ hourMode() === 'reeks' ? '; klik op twee uren voor een reeks' : '' }}.</p>
-          <svg class="chart" viewBox="0 0 288 104" role="img" [attr.aria-label]="'Fietsers per uur op ' + dateText()">
-            <rect class="chart__band" [attr.x]="selectionBand().x" y="0" [attr.width]="selectionBand().width" height="84" />
-            <line class="chart__axis" x1="0" y1="84" x2="288" y2="84" />
-            <text class="chart__label" x="0" y="8">{{ nl(ic.top) }}</text>
-            @for (b of ic.bars; track b.h) {
-              <rect class="chart__bar" [class.chart__bar--on]="inSelection(b.h)" [attr.x]="b.x" [attr.y]="b.y" width="8" [attr.height]="b.height" (click)="pickHour(b.h, $event)"><title>{{ hourLabel(b.h) }} · {{ nl(b.count) }} fietsers</title></rect>
-            }
-            @for (h of [0, 6, 12, 18, 23]; track h) {
-              <text class="chart__label" [attr.x]="h * 12 + 6" y="99" text-anchor="middle">{{ hourLabel(h).slice(0, 2) }}</text>
-            }
-          </svg>
+          <section class="card" aria-labelledby="int-title">
+            <div>
+              <h3 id="int-title" class="ndw-heading-xs">Intensiteit per uur</h3>
+              <p class="note ndw-paragraph-sm">Klik op een staaf om het uur te kiezen{{ hourMode() === 'reeks' ? '; klik op twee uren voor een reeks' : '' }}.</p>
+            </div>
+            <svg class="chart" viewBox="0 0 288 108" role="img" [attr.aria-label]="'Fietsers per uur op ' + dateText()">
+              <rect class="chart__band" [attr.x]="selectionBand().x" y="0" [attr.width]="selectionBand().width" height="84" />
+              <line class="chart__grid" x1="0" y1="8" x2="288" y2="8" />
+              <line class="chart__grid" x1="0" y1="46" x2="288" y2="46" />
+              <line class="chart__axis" x1="0" y1="84" x2="288" y2="84" />
+              <text class="chart__label" x="0" y="4">{{ nl(ic.top) }}</text>
+              @for (b of ic.bars; track b.h) {
+                <path class="chart__bar" [class.chart__bar--on]="inSelection(b.h)" [attr.d]="barPath(b)" (click)="pickHour(b.h, $event)"><title>{{ hourLabel(b.h) }} · {{ nl(b.count) }} fietsers</title></path>
+              }
+              @for (h of [0, 6, 12, 18, 23]; track h) {
+                <text class="chart__label" [attr.x]="h * 12 + 6" y="102" text-anchor="middle">{{ hourLabel(h).slice(0, 2) }}</text>
+              }
+            </svg>
+          </section>
         }
 
         @if (speedChart(); as sc) {
-          <h3 class="ndw-heading-xs">Gemiddelde snelheid per uur</h3>
-          <svg class="chart" viewBox="0 0 288 104" role="img" [attr.aria-label]="'Gemiddelde snelheid per uur op ' + dateText()">
-            <rect class="chart__band" [attr.x]="selectionBand().x" y="0" [attr.width]="selectionBand().width" height="84" />
-            <line class="chart__axis" x1="0" y1="84" x2="288" y2="84" />
-            <text class="chart__label" x="0" y="8">{{ speedAxis[1] }} km/u</text>
-            <text class="chart__label" x="0" y="80">{{ speedAxis[0] }}</text>
-            <path class="chart__line" [attr.d]="sc.path" />
-            @for (p of sc.points; track p.h) {
-              <circle class="chart__dot" [class.chart__dot--on]="inSelection(p.h)" [attr.cx]="p.x" [attr.cy]="p.y" r="3" (click)="pickHour(p.h, $event)"><title>{{ hourLabel(p.h) }} · {{ nl(p.v, 1) }} km/u</title></circle>
-            }
-            @for (h of [0, 6, 12, 18, 23]; track h) {
-              <text class="chart__label" [attr.x]="h * 12 + 6" y="99" text-anchor="middle">{{ hourLabel(h).slice(0, 2) }}</text>
-            }
-          </svg>
+          <section class="card" aria-labelledby="spd-title">
+            <h3 id="spd-title" class="ndw-heading-xs">Gemiddelde snelheid per uur</h3>
+            <svg class="chart" viewBox="0 0 288 108" role="img" [attr.aria-label]="'Gemiddelde snelheid per uur op ' + dateText()">
+              <rect class="chart__band" [attr.x]="selectionBand().x" y="0" [attr.width]="selectionBand().width" height="84" />
+              <line class="chart__grid" x1="0" y1="8" x2="288" y2="8" />
+              <line class="chart__grid" x1="0" y1="46" x2="288" y2="46" />
+              <line class="chart__axis" x1="0" y1="84" x2="288" y2="84" />
+              <text class="chart__label" x="0" y="4">{{ speedAxis[1] }} km/u</text>
+              <text class="chart__label" x="0" y="96">{{ speedAxis[0] }}</text>
+              <path class="chart__line" [attr.d]="sc.path" />
+              @for (p of sc.points; track p.h) {
+                <circle class="chart__dot" [class.chart__dot--on]="inSelection(p.h)" [attr.cx]="p.x" [attr.cy]="p.y" r="3" (click)="pickHour(p.h, $event)"><title>{{ hourLabel(p.h) }} · {{ nl(p.v, 1) }} km/u</title></circle>
+              }
+              @for (h of [0, 6, 12, 18, 23]; track h) {
+                <text class="chart__label" [attr.x]="h * 12 + 6" y="102" text-anchor="middle">{{ hourLabel(h).slice(0, 2) }}</text>
+              }
+            </svg>
+          </section>
         }
       }
-    } @else {
-      <header class="panel__head">
-        <div>
-          <h2 class="ndw-heading-sm">Geen wegvak geselecteerd</h2>
-          <p class="meta ndw-paragraph-sm">{{ dateText() }} · {{ selection() }}</p>
-        </div>
-      </header>
-      <ol class="steps ndw-paragraph-md">
-        <li>Klik een wegvak op de kaart aan, waar dan ook in Nederland, of kies een voorbeeld hieronder.</li>
-        <li>Zie het aantal fietsers, de snelheid en de grafieken per uur.</li>
-        <li>Pas de datum of de uren aan, of kies een uur in de grafiek.</li>
-      </ol>
-      <h3 class="ndw-heading-xs">Voorbeeldwegvakken</h3>
-      <ul class="roads">
-        @for (s of examples; track s.id) {
-          <li>
-            <button type="button" (click)="selectExample(s)">
-              <span class="ndw-paragraph-md">{{ s.name }}</span>
-              <span class="ndw-paragraph-sm">{{ exampleValue(s) }}</span>
-            </button>
-          </li>
-        }
-      </ul>
-    }
   </aside>
+  }
 </div>

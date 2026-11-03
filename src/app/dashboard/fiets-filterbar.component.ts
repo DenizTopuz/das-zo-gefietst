@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, model, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ButtonDirective, CalendarComponent, SwitcherComponent } from '@ndwnu/design-system';
+import { ButtonDirective, DatepickerComponent, FormFieldComponent, OptionComponent, OptionGroupComponent, SwitcherComponent } from '@ndwnu/design-system';
 import { DATA_END, DATA_START, DirectionFilter, dateLabel, hourLabel, rangeLabel } from './fiets-data';
 
 type Panel = 'datum' | 'tijd' | 'richting';
 
-const DIRECTIONS: { value: DirectionFilter; label: string; hint: string }[] = [
-  { value: 'beide', label: 'Beide richtingen', hint: 'Heen en terug samen' },
-  { value: 'a', label: 'Richting A', hint: 'Heen' },
-  { value: 'b', label: 'Richting B', hint: 'Terug' },
+const DIRECTIONS: { value: DirectionFilter; label: string; option: string }[] = [
+  { value: 'beide', label: 'Beide richtingen', option: 'Beide' },
+  { value: 'a', label: 'Richting A (heen)', option: 'A (heen)' },
+  { value: 'b', label: 'Richting B (terug)', option: 'B (terug)' },
 ];
 
 /**
@@ -18,7 +18,7 @@ const DIRECTIONS: { value: DirectionFilter; label: string; hint: string }[] = [
  */
 @Component({
   selector: 'app-fiets-filterbar',
-  imports: [ButtonDirective, CalendarComponent, ReactiveFormsModule, SwitcherComponent],
+  imports: [ButtonDirective, DatepickerComponent, FormFieldComponent, OptionComponent, OptionGroupComponent, ReactiveFormsModule, SwitcherComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(document:click)': 'closeOutside($event)', '(keydown.escape)': 'open.set(null)' },
   template: `
@@ -34,13 +34,15 @@ const DIRECTIONS: { value: DirectionFilter; label: string; hint: string }[] = [
             <div class="pop" [class]="'pop pop--' + s.id" [id]="'pop-' + s.id" role="dialog" [attr.aria-label]="s.label">
               @switch (s.id) {
                 @case ('datum') {
-                  <ndw-calendar [formControl]="calendarControl" [minDate]="minDate" [maxDate]="maxDate" [startAt]="calendarControl.value" [dateWithIndicatorFilter]="hasData"></ndw-calendar>
+                  <ndw-form-field label="Datum">
+                    <ndw-datepicker [formControl]="calendarControl" [minDate]="minDate" [maxDate]="maxDate" [dateEnabledFilter]="hasData" placeholder="Kies een datum"></ndw-datepicker>
+                  </ndw-form-field>
                   <div class="chips">
-                    <button ndwButton tertiary extra-small type="button" (click)="shiftDay(-1)">Vorige dag</button>
-                    <button ndwButton tertiary extra-small type="button" (click)="shiftDay(1)">Volgende dag</button>
-                    <button ndwButton tertiary extra-small type="button" (click)="pickDate(dataEnd)">Laatste dag met data</button>
+                    <button ndwButton secondary large type="button" (click)="shiftDay(-1)">Vorige dag</button>
+                    <button ndwButton secondary large type="button" (click)="shiftDay(1)">Volgende dag</button>
+                    <button ndwButton secondary large type="button" (click)="pickDate(dataEnd)">Laatste dag met data</button>
                   </div>
-                  <p class="hint">Demodata van {{ label(dataStart) }} t/m {{ label(dataEnd) }}. De puntjes in de kalender tonen de dagen met data.</p>
+                  <p class="hint">Demodata van {{ label(dataStart) }} t/m {{ label(dataEnd) }}. Dagen buiten deze periode zijn niet te kiezen.</p>
                 }
                 @case ('tijd') {
                   <ndw-switcher class="toggle" [options]="hourModes" [selectedValue]="hourMode()" (selectionChange)="setMode($any($event))"></ndw-switcher>
@@ -52,16 +54,11 @@ const DIRECTIONS: { value: DirectionFilter; label: string; hint: string }[] = [
                   <p class="hint">{{ hourMode() === 'reeks' ? (anchor() === null ? 'Kies het eerste uur en daarna het laatste uur van de reeks.' : 'Kies nu het laatste uur van de reeks.') : 'Kies één uur van de dag.' }} Geselecteerd: {{ rangeLabel(hour0(), hour1()) }}.</p>
                 }
                 @case ('richting') {
-                  <ul class="dirs">
+                  <ndw-option-group mode="single" [fluid]="true" [checkedValues]="[direction()]" (checkedValuesChange)="pickDirection($any($event)[0])">
                     @for (d of directions; track d.value) {
-                      <li>
-                        <button type="button" class="dir" [class.dir--on]="direction() === d.value" [attr.aria-pressed]="direction() === d.value" (click)="pickDirection(d.value)">
-                          <span class="dir__label">{{ d.label }}</span>
-                          <span class="dir__hint">{{ d.hint }}</span>
-                        </button>
-                      </li>
+                      <ndw-option [value]="d.value" [label]="d.option"></ndw-option>
                     }
-                  </ul>
+                  </ndw-option-group>
                 }
               }
             </div>
@@ -80,7 +77,7 @@ const DIRECTIONS: { value: DirectionFilter; label: string; hint: string }[] = [
       display: inline-flex;
       align-items: stretch;
       background: var(--ndw-color-white);
-      border: var(--ndw-border-size-sm) solid var(--ndw-color-grey-300);
+      border: var(--ndw-border-size-sm) solid var(--ndw-color-grey-200);
       border-radius: var(--ndw-border-radius-sm);
       box-shadow: var(--ndw-elevation-content);
     }
@@ -98,7 +95,7 @@ const DIRECTIONS: { value: DirectionFilter; label: string; hint: string }[] = [
       top: 28%;
       bottom: 28%;
       width: 1px;
-      background: var(--ndw-color-grey-300);
+      background: var(--ndw-color-grey-200);
     }
     .pill--open .seg--active::before,
     .pill--open .seg--active + .seg::before {
@@ -147,25 +144,21 @@ const DIRECTIONS: { value: DirectionFilter; label: string; hint: string }[] = [
       padding: var(--ndw-spacing-md);
       background: var(--ndw-color-white);
       border: var(--ndw-border-size-sm) solid var(--ndw-color-grey-200);
-      border-radius: var(--ndw-border-radius-md);
+      border-radius: var(--ndw-border-radius-sm);
       box-shadow: var(--ndw-elevation-popover);
     }
     .pop--datum {
-      width: 22rem;
+      width: 24rem;
       max-width: calc(100vw - 2rem);
     }
     .pop--tijd {
       width: 24rem;
     }
     .pop--richting {
-      width: 20rem;
-      padding: var(--ndw-spacing-xs);
+      width: 22rem;
     }
 
     /* Kalender van het ontwerpsysteem */
-    .pop--datum ndw-calendar {
-      display: block;
-    }
     .chips {
       display: flex;
       flex-wrap: wrap;
@@ -180,7 +173,6 @@ const DIRECTIONS: { value: DirectionFilter; label: string; hint: string }[] = [
 
     /* Tijd */
     .toggle {
-      display: block;
       margin-bottom: var(--ndw-spacing-md);
     }
     .hours {
@@ -211,45 +203,6 @@ const DIRECTIONS: { value: DirectionFilter; label: string; hint: string }[] = [
       background: var(--ndw-color-primary-500);
     }
     .hour:focus-visible {
-      outline: var(--ndw-border-size-md) solid var(--ndw-color-warning-500);
-    }
-
-    /* Richting */
-    .dirs {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-    .dir {
-      all: unset;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      padding: var(--ndw-spacing-xs) var(--ndw-spacing-sm);
-      border: var(--ndw-border-size-sm) solid transparent;
-      border-radius: var(--ndw-border-radius-sm);
-      cursor: pointer;
-    }
-    .dir:hover {
-      background: var(--ndw-color-grey-100);
-    }
-    .dir--on,
-    .dir--on:hover {
-      background: var(--ndw-color-primary-100);
-      border-color: var(--ndw-color-primary-500);
-    }
-    .dir__label {
-      font-weight: 700;
-    }
-    .dir__hint {
-      font-size: 0.8125rem;
-      color: var(--ndw-color-grey-500);
-    }
-    .dir:focus-visible {
       outline: var(--ndw-border-size-md) solid var(--ndw-color-warning-500);
     }
   `,
@@ -298,7 +251,9 @@ export class FietsFilterbarComponent {
   }
 
   protected closeOutside(event: Event) {
-    if (!this.#host.nativeElement.contains(event.target as Node)) this.open.set(null);
+    const target = event.target as HTMLElement;
+    // De kalender van de datepicker opent in een overlay buiten dit component; klikken daarin sluit het paneel niet.
+    if (!this.#host.nativeElement.contains(target) && !target.closest('.cdk-overlay-container')) this.open.set(null);
   }
 
   protected pickDate(iso: string) {
@@ -340,7 +295,8 @@ export class FietsFilterbarComponent {
     }
   }
 
-  protected pickDirection(direction: DirectionFilter) {
+  protected pickDirection(direction: DirectionFilter | undefined) {
+    if (!direction) return;
     this.direction.set(direction);
     this.open.set(null);
   }

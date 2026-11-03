@@ -24,6 +24,7 @@ import {
   TYPE_LABELS,
 } from './fiets-data';
 import { FietsFilterbarComponent } from './fiets-filterbar.component';
+import { FietsTourService } from './fiets-tour.service';
 import { FietsMapComponent, MapFocus, MapHover } from './fiets-map.component';
 
 type Status = 'start' | 'geen-data' | 'nul' | 'ok';
@@ -64,6 +65,8 @@ export class DashboardPage {
   protected readonly notFound = signal(false);
   protected readonly searching = signal(false);
   protected readonly suggestions = signal<Suggestion[]>([]);
+  /** Of de zoekdienst heeft geantwoord op de huidige zoektekst; pas dan hoort 'geen resultaten' te verschijnen. */
+  protected readonly searchSettled = signal(false);
   /** Opties voor de autosuggest van het ontwerpsysteem; de suggesties zijn al gefilterd door de zoekdienst. */
   protected readonly options = computed<AutosuggestOption[]>(() => this.suggestions().map((s) => ({ label: s.label, value: s.id, icon: s.type === 'Straat' ? 'route' : 'location_city' })));
   protected readonly anyMatch = () => true;
@@ -72,29 +75,43 @@ export class DashboardPage {
   #suggestRun = 0;
   #chosen = '';
   private readonly map = viewChild(FietsMapComponent);
+  protected readonly tour = inject(FietsTourService);
   protected readonly hover = signal<MapHover | null>(null);
   /** Eerste klik van een reeks in een grafiek; de tweede klik sluit de reeks. */
   readonly #anchor = signal<number | null>(null);
 
   constructor() {
     document.body.classList.add('fiets-active');
+    // Rondleiding: de eerste keer vanzelf, nadat kaart en paneel er staan.
+    // De eerste stap kiest zelf een wegvak, zodat een nieuwe gebruiker meteen ziet wat selecteren doet.
+    this.tour.prepare = async () => {
+      this.selectExample(EXAMPLES[0]);
+      await new Promise((resolve) => setTimeout(resolve, 2200));
+    };
+    const tourTimer = setTimeout(() => this.tour.startTour(), 1200);
     inject(DestroyRef).onDestroy(() => {
-      document.body.classList.remove('fiets-active');
+      document.body.classList.remove('fiets-active', 'fiets-search-idle');
       clearTimeout(this.#suggestTimer);
+      clearTimeout(tourTimer);
     });
     this.searchControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((value) => {
       this.query.set(value ?? '');
       this.notFound.set(false);
     });
+    effect(() => document.body.classList.toggle('fiets-search-idle', !this.searchSettled()));
     // Suggesties bij het typen: kort wachten tot de gebruiker even stopt.
     effect(() => {
       const query = this.query().trim();
       clearTimeout(this.#suggestTimer);
       const run = ++this.#suggestRun;
+      this.searchSettled.set(false);
       if (query.length < 3 || query === this.#chosen) return this.suggestions.set([]);
       this.#suggestTimer = setTimeout(async () => {
         const found = await suggestPlaces(query, 6);
-        if (run === this.#suggestRun) this.suggestions.set(found);
+        if (run === this.#suggestRun) {
+          this.suggestions.set(found);
+          this.searchSettled.set(true);
+        }
       }, 250);
     });
   }
@@ -104,6 +121,7 @@ export class DashboardPage {
   protected readonly nHours = computed(() => this.hour1() - this.hour0() + 1);
   protected readonly selection = computed(() => rangeLabel(this.hour0(), this.hour1()));
   protected readonly dateText = computed(() => dateLabel(this.date()));
+  protected readonly directionLabel = computed(() => ({ beide: 'Beide richtingen', a: 'Richting A (heen)', b: 'Richting B (terug)' })[this.direction()]);
   protected readonly direction = signal<DirectionFilter>('beide');
   protected readonly summary = computed(() => {
     const seg = this.segment();
@@ -186,6 +204,15 @@ export class DashboardPage {
     return { path, points: points.filter((p): p is NonNullable<typeof p> => !!p) };
   });
 
+  /** Staaf met een halfronde bovenkant (straal = halve breedte). */
+  protected barPath(b: { x: number; y: number; height: number }): string {
+    const w = 8;
+    const r = Math.min(w / 2, b.height);
+    if (b.height <= 0) return '';
+    const bottom = b.y + b.height;
+    return `M${b.x} ${bottom} V${b.y + r} A${r} ${r} 0 0 1 ${b.x + w} ${b.y + r} V${bottom} Z`;
+  }
+
   protected selectionBand(): { x: number; width: number } {
     return { x: this.hour0() * 12, width: this.nHours() * 12 };
   }
@@ -235,6 +262,7 @@ export class DashboardPage {
     this.#chosenAt = Date.now();
     this.#chosen = suggestion.label;
     this.suggestions.set([]);
+    this.searchSettled.set(false);
     this.notFound.set(false);
     const place = await resolvePlace(suggestion);
     if (place) await this.goTo(place);
@@ -290,11 +318,6 @@ export class DashboardPage {
       this.hour1.set(Math.max(anchor, h));
       this.#anchor.set(null);
     }
-  }
-
-  protected exampleValue(example: (typeof EXAMPLES)[number]): string {
-    const sum = summarize(segmentFromRoad({ roadSectionId: example.id, roadName: example.name, functionalRoadClass: '7' }), this.date(), this.hour0(), this.hour1());
-    return sum.available ? `${nl(sum.total)} fietsers` : 'Geen data';
   }
 }
 
