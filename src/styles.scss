@@ -310,18 +310,18 @@ ndw-layout ndw-main-navigation.expanded[class] {
 }
 
 // Werkruimte (kopie) only: the top bar with the breadcrumb is filled with white across the full width.
-.app-frame:has(app-werkruimte-kopie) .app-topbar {
+.app-frame:has(:is(app-werkruimte-kopie, app-dashboard)) .app-topbar {
   background: var(--ndw-color-white);
   border-bottom: var(--ndw-border-size-sm) solid var(--ndw-color-grey-200);
 }
 
 // Werkruimte (kopie) only: no "Voorbeeldgegevens" marker in the top bar.
-.app-frame:has(app-werkruimte-kopie) .app-topbar .sample-data {
+.app-frame:has(:is(app-werkruimte-kopie, app-dashboard)) .app-topbar .sample-data {
   display: none;
 }
 
 // Werkruimte (kopie) only: a tighter menu header (logo, environment pill) so the menu items start higher.
-ndw-layout:has(app-werkruimte-kopie) ndw-main-navigation-header header.expanded[class] {
+ndw-layout:has(:is(app-werkruimte-kopie, app-dashboard)) ndw-main-navigation-header header.expanded[class] {
   gap: var(--ndw-spacing-xs);
   margin-bottom: var(--ndw-spacing-xs);
   padding-top: 20px;
@@ -332,12 +332,12 @@ ndw-layout:has(app-werkruimte-kopie) ndw-main-navigation-header header.expanded[
 }
 
 // ...and the fold toggle follows the logo up.
-.app-frame:has(app-werkruimte-kopie) .app-topbar .menu-toggle--in-menu {
+.app-frame:has(:is(app-werkruimte-kopie, app-dashboard)) .app-topbar .menu-toggle--in-menu {
   top: 22px;
 }
 
 // Werkruimte (kopie) only: a slimmer top bar.
-.app-frame:has(app-werkruimte-kopie) .app-topbar {
+.app-frame:has(:is(app-werkruimte-kopie, app-dashboard)) .app-topbar {
   // The fold toggle sits at 22px with a height of 24px; this height centres the breadcrumb on it.
   min-height: 64px;
   padding-block: var(--ndw-spacing-3xs);

@@ -17,6 +17,7 @@ export const routes: Routes = [
     mapPage('template-1', 'Kaartweergave'),
     { path: 'template-2', title: 'Werkruimte · Template', data: { breadcrumb: 'Werkruimte' }, loadComponent: () => import('./workspace/workspace.page').then((m) => m.WorkspacePage) },
     { path: 'werkruimte-kopie', title: 'Werkruimte (kopie) · Template', data: { breadcrumb: 'Werkruimte (kopie)' }, loadComponent: () => import('./werkruimte-kopie/werkruimte-kopie.page').then((m) => m.WerkruimteKopiePage) },
+    { path: 'dashboard', title: 'Das zo gefietst · Template', data: { breadcrumb: 'Das zo gefietst' }, loadComponent: () => import('./dashboard/dashboard.page').then((m) => m.DashboardPage) },
     {
       path: 'layout-lab',
       component: LabShellComponent,

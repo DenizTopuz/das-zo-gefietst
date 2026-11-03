@@ -67,6 +67,8 @@ Elk menu-item is één template, zodat ze afzonderlijk kunnen worden opgeschoond
 | --- | --- | --- |
 | Kaartweergave | Verkeerskaart (alle lagen; verving Dashboard, Incidenten, Wegwerkzaamheden, Verkeerskaart en Maatregelen, die hetzelfde scherm met andere lagen waren) | `/template-1` |
 | Werkruimte | Werkruimte | `/template-2` |
+| Werkruimte (kopie) | Kopie van Werkruimte om mee te experimenteren (paneelknoppen en Weergave in de bovenbalk) | `/werkruimte-kopie` |
+| Das zo gefietst | Fietsdata-verkenner met demodata, zie hieronder | `/dashboard` |
 | Template 3 | Layout lab T1 Kaart verkennen | `/layout-lab/t1` |
 | Template 4 | Layout lab T2 Werkvoorraad + kaart | `/layout-lab/t2` |
 | Template 5 | Layout lab T3 Analyse + kaart | `/layout-lab/t3` |
@@ -75,3 +77,17 @@ Elk menu-item is één template, zodat ze afzonderlijk kunnen worden opgeschoond
 | Template 8 | Layout lab T6 Dashboard zonder kaart | `/layout-lab/t6` |
 
 Template 3 t/m 8 staan nog in de prototypebalk van het Layout lab (varianten, demo-toestand, toelichting).
+
+## Das zo gefietst (fietsdata-verkenner)
+
+Interactief prototype voor de verkenning van fietsdata per wegvak in Dexter. Alle cijfers zijn **fictieve demodata** (gelabeld als "Demodata"). De code staat in `src/app/dashboard/`.
+
+- **Kaart:** alle wegvakken van het Nationaal Wegenbestand (klasse 3 t/m 7, geen snelwegen) uit de NDW-basiskaart zijn klikbaar. Het gekozen wegvak wordt lichtblauw, de rest is een neutrale omlijning.
+- **Filterbalk:** datum, tijd (één uur of een reeks) en richting (beide, A heen, B terug) in één samengestelde balk.
+- **Zoeken:** op naam of NWB-nummer, met autosuggest van het ontwerpsysteem. De suggesties komen uit de open Locatieserver van PDOK; de zoektekst wordt dus naar PDOK gestuurd.
+- **Rechterpaneel:** aantal fietsers (alle fietstypen), harmonisch gemiddelde snelheid (bij meerdere uren gewogen naar aantallen, voorlopige keuze), verdeling over richting A en B en grafieken per uur.
+- **Toestanden:** start (nog niets gekozen), geen data (datum of wegvak buiten de demodata), nul fietsers en normaal. Voorbeeldwegvakken in het paneel laten de toestanden zien.
+- **Gegevensvorm:** de demodata volgt de vorm van de bron (`road_section_id`, per uur en per richting `intensity` en `harmonic_mean_speed_kph`). `speed_cat` is nog niet uitgewerkt; alle fietsers worden samen getoond.
+- **Niet opgenomen:** herkomst en bestemming, tijdlijn onder de kaart, ongevallen, onderscheid naar fietstype en individuele ritten.
+
+Afwijkingen van het ontwerpsysteem staan in [COMPONENT-CHANGELOG.md](COMPONENT-CHANGELOG.md) (CC-052 t/m CC-056).
