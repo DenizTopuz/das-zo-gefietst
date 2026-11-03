@@ -267,6 +267,10 @@
 
 .view-menu {
   position: relative;
+  // Thin divider separates the view control from the pane toggles.
+  margin-left: var(--ndw-spacing-2xs);
+  padding-left: var(--ndw-spacing-xs);
+  border-left: var(--ndw-border-size-sm) solid var(--ndw-color-grey-200);
 
   // Larger icon-only button in a light grey from the house style, like the expand control of Claude.
   &__trigger[ndwButton] {

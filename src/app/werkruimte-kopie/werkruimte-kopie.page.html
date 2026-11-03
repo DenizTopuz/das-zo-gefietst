@@ -6,26 +6,28 @@
       <ndw-icon>{{ p.icon }}</ndw-icon>
     </button>
   }
-  @if (canArrange()) {
-    <div class="view-menu">
-      <button ndwButton tertiary extra-small type="button" class="view-menu__trigger" aria-label="Weergave" title="Weergave" aria-haspopup="true" aria-controls="view-menu-panel" [attr.aria-expanded]="viewMenuOpen()" (click)="viewMenuOpen.set(!viewMenuOpen())">
-        <ndw-icon>open_in_full</ndw-icon>
-      </button>
-      @if (viewMenuOpen()) {
-        <div id="view-menu-panel" class="view-menu__panel" role="group" aria-label="Weergave">
-          <p class="view-menu__title ndw-paragraph-sm">Indeling van kaart en resultaten</p>
-          <div class="view-menu__options">
-            @for (a of arrangements; track a.value) {
-              <button type="button" class="view-menu__option" [class.view-menu__option--on]="layout().arrangement === a.value" [attr.aria-pressed]="layout().arrangement === a.value" [attr.title]="a.hint" (click)="pickArrangement(a.value)">
-                <ndw-icon>{{ a.icon }}</ndw-icon>
-                <span class="ndw-paragraph-sm">{{ a.label }}</span>
-              </button>
-            }
-          </div>
+  <div class="view-menu">
+    <button ndwButton tertiary extra-small type="button" class="view-menu__trigger" aria-label="Weergave" title="Weergave" aria-haspopup="true" aria-controls="view-menu-panel" [attr.aria-expanded]="viewMenuOpen()" (click)="viewMenuOpen.set(!viewMenuOpen())">
+      <ndw-icon>open_in_full</ndw-icon>
+    </button>
+    @if (viewMenuOpen()) {
+      <div id="view-menu-panel" class="view-menu__panel" role="group" aria-label="Weergave">
+        <p class="view-menu__title ndw-paragraph-sm">Indeling van kaart en resultaten</p>
+        @if (canArrange()) {
+        <div class="view-menu__options">
+          @for (a of arrangements; track a.value) {
+            <button type="button" class="view-menu__option" [class.view-menu__option--on]="layout().arrangement === a.value" [attr.aria-pressed]="layout().arrangement === a.value" [attr.title]="a.hint" (click)="pickArrangement(a.value)">
+              <ndw-icon>{{ a.icon }}</ndw-icon>
+              <span class="ndw-paragraph-sm">{{ a.label }}</span>
+            </button>
+          }
         </div>
-      }
-    </div>
-  }
+        } @else {
+          <p class="view-menu__title ndw-paragraph-sm">Open de kaart en de resultaten om de indeling te kiezen.</p>
+        }
+      </div>
+    }
+  </div>
 </ng-template>
 
 @if (!mapShown()) {
