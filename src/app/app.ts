@@ -8,16 +8,7 @@ import { TopbarSlot } from './shared/topbar-slot.service';
 import { observeTooltipPlacement } from './shared/tooltip-placement';
 
 const TOP_MENU: MenuItem[] = [
-  { label: 'Kaartweergave', icon: 'map', path: ['/template-1'] },
-  { label: 'Werkruimte', icon: 'view_sidebar', path: ['/template-2'] },
-  { label: 'Werkruimte (kopie)', icon: 'view_sidebar', path: ['/werkruimte-kopie'] },
-  { label: 'Das zo gefietst', icon: 'dashboard', path: ['/dashboard'] },
-  { label: 'Template 3', icon: 'map', path: ['/layout-lab/t1'] },
-  { label: 'Template 4', icon: 'table_view', path: ['/layout-lab/t2'] },
-  { label: 'Template 5', icon: 'analytics', path: ['/layout-lab/t3'] },
-  { label: 'Template 6', icon: 'edit_note', path: ['/layout-lab/t4'] },
-  { label: 'Template 7', icon: 'view_list', path: ['/layout-lab/t5'] },
-  { label: 'Template 8', icon: 'monitoring', path: ['/layout-lab/t6'] },
+  { label: 'Kaartweergave', icon: 'map', path: ['/dashboard'] },
 ];
 
 const WIDTH_KEY = 'ndw-menu-width:v1';
@@ -46,7 +37,7 @@ const BOTTOM_MENU: MenuItem[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <ndw-layout
-      applicationName="Template"
+      applicationName="Da's zo gefietst"
       environment="Local"
       version="Versie 20240326.17"
       [menuFooterTexts]="footerTexts"
@@ -97,7 +88,7 @@ export class App {
   }
 
   /** The menu is folded in and out from the top bar, not from the foot of the menu. */
-  protected readonly menuOpen = signal(true);
+  protected readonly menuOpen = signal(false);
   protected readonly topbar = inject(TopbarSlot);
   protected readonly minWidth = 200;
   protected readonly maxWidth = 480;

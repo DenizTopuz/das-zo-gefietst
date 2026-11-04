@@ -177,6 +177,7 @@
 .note {
   display: flex;
   gap: var(--ndw-spacing-3xs);
+  font-size: 0.8125rem;
 }
 
 .alert__body {
@@ -229,6 +230,7 @@
   &__label,
   &__sub {
     margin: 0;
+    font-size: 0.875rem;
   }
 
   &__sub {
@@ -290,12 +292,14 @@
 
   &__n {
     text-align: right;
+    font-size: 0.875rem;
   }
 
   &__v {
     min-width: 5rem;
     text-align: right;
-    color: var(--muted);
+    color: var(--ndw-color-grey-700);
+    font-size: 0.875rem;
   }
 }
 
@@ -724,7 +728,7 @@
   width: 2.5rem;
   height: 2.5rem;
   padding: 0;
-  color: var(--ndw-color-primary-500);
+  color: var(--ndw-color-grey-500);
 
   ndw-icon {
     width: 1.75rem;

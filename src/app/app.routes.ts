@@ -13,7 +13,7 @@ const mapPage = (path: string, title: string, kinds?: MapKind[]) => ({
 export const routes: Routes = [
   // The empty parent supplies the first breadcrumb ('Start'); each page adds its own through `data.breadcrumb`.
   { path: '', data: { breadcrumb: 'Start' }, children: [
-    { path: '', pathMatch: 'full', redirectTo: 'template-1' },
+    { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     mapPage('template-1', 'Kaartweergave'),
     { path: 'template-2', title: 'Werkruimte · Template', data: { breadcrumb: 'Werkruimte' }, loadComponent: () => import('./workspace/workspace.page').then((m) => m.WorkspacePage) },
     { path: 'werkruimte-kopie', title: 'Werkruimte (kopie) · Template', data: { breadcrumb: 'Werkruimte (kopie)' }, loadComponent: () => import('./werkruimte-kopie/werkruimte-kopie.page').then((m) => m.WerkruimteKopiePage) },
@@ -32,6 +32,6 @@ export const routes: Routes = [
         { path: '**', redirectTo: 't2' },
       ],
     },
-    { path: '**', redirectTo: 'template-1' },
+    { path: '**', redirectTo: 'dashboard' },
   ] },
 ];
