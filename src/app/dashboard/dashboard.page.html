@@ -23,7 +23,6 @@
         </div>
         <app-fiets-filterbar [(date)]="date" [(hour0)]="hour0" [(hour1)]="hour1" [(hourMode)]="hourMode" [(direction)]="direction" />
         <ndw-pill class="demodata" color="yellow" title="Alle gegevens op deze pagina zijn fictief">Demodata</ndw-pill>
-        <button ndwButton secondary type="button" class="helpbtn" aria-label="Rondleiding starten" title="Rondleiding starten" (click)="tour.startTour({ skipStorageCheck: true })"><ndw-icon>help</ndw-icon></button>
       </div>
       <div class="tour-anchor" aria-hidden="true"></div>
       @if (notFound()) {
