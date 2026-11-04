@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, model, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ButtonDirective, DatepickerComponent, FormFieldComponent, OptionComponent, OptionGroupComponent, SwitcherComponent } from '@ndwnu/design-system';
+import { ButtonDirective, DatepickerComponent, FormFieldComponent, ListComponent, ListItemComponent, SwitcherComponent } from '@ndwnu/design-system';
 import { DATA_END, DATA_START, DirectionFilter, dateLabel, hourLabel, rangeLabel } from './fiets-data';
 
 type Panel = 'datum' | 'tijd' | 'richting';
 
-const DIRECTIONS: { value: DirectionFilter; label: string; option: string }[] = [
-  { value: 'beide', label: 'Beide richtingen', option: 'Beide' },
-  { value: 'a', label: 'Richting A (heen)', option: 'A (heen)' },
-  { value: 'b', label: 'Richting B (terug)', option: 'B (terug)' },
+const DIRECTIONS: { value: DirectionFilter; label: string; hint: string }[] = [
+  { value: 'beide', label: 'Beide richtingen', hint: 'Heen en terug samen' },
+  { value: 'a', label: 'Richting A (heen)', hint: 'Alleen heen' },
+  { value: 'b', label: 'Richting B (terug)', hint: 'Alleen terug' },
 ];
 
 /**
@@ -18,7 +18,7 @@ const DIRECTIONS: { value: DirectionFilter; label: string; option: string }[] = 
  */
 @Component({
   selector: 'app-fiets-filterbar',
-  imports: [ButtonDirective, DatepickerComponent, FormFieldComponent, OptionComponent, OptionGroupComponent, ReactiveFormsModule, SwitcherComponent],
+  imports: [ButtonDirective, DatepickerComponent, FormFieldComponent, ListComponent, ListItemComponent, ReactiveFormsModule, SwitcherComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(document:click)': 'closeOutside($event)', '(keydown.escape)': 'open.set(null)' },
   template: `
@@ -54,11 +54,11 @@ const DIRECTIONS: { value: DirectionFilter; label: string; option: string }[] = 
                   <p class="hint">{{ hourMode() === 'reeks' ? (anchor() === null ? 'Kies het eerste uur en daarna het laatste uur van de reeks.' : 'Kies nu het laatste uur van de reeks.') : 'Kies één uur van de dag.' }} Geselecteerd: {{ rangeLabel(hour0(), hour1()) }}.</p>
                 }
                 @case ('richting') {
-                  <ndw-option-group mode="single" [fluid]="true" [checkedValues]="[direction()]" (checkedValuesChange)="pickDirection($any($event)[0])">
+                  <ndw-list>
                     @for (d of directions; track d.value) {
-                      <ndw-option [value]="d.value" [label]="d.option"></ndw-option>
+                      <ndw-list-item [title]="d.label" [subtitle]="d.hint" [checkable]="true" checkType="radio" [checked]="direction() === d.value" (click)="pickDirection(d.value)"></ndw-list-item>
                     }
-                  </ndw-option-group>
+                  </ndw-list>
                 }
               }
             </div>
@@ -155,7 +155,8 @@ const DIRECTIONS: { value: DirectionFilter; label: string; option: string }[] = 
       width: 24rem;
     }
     .pop--richting {
-      width: 22rem;
+      width: 20rem;
+      padding: var(--ndw-spacing-2xs);
     }
 
     /* Kalender van het ontwerpsysteem */
