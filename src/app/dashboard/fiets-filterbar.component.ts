@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, model, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ButtonDirective, DatepickerComponent, FormFieldComponent, ListComponent, ListItemComponent, SwitcherComponent } from '@ndwnu/design-system';
-import { DATA_END, DATA_START, DirectionFilter, dateLabel, hourLabel, rangeLabel } from './fiets-data';
+import { ButtonDirective, CalendarComponent, ListComponent, ListItemComponent, SwitcherComponent } from '@ndwnu/design-system';
+import { DATA_END, DATA_START, DirectionFilter, dateLabel, dateRangeLabel, hourLabel, rangeLabel } from './fiets-data';
 
 type Panel = 'datum' | 'tijd' | 'richting';
 
@@ -18,7 +18,7 @@ const DIRECTIONS: { value: DirectionFilter; label: string; hint: string }[] = [
  */
 @Component({
   selector: 'app-fiets-filterbar',
-  imports: [ButtonDirective, DatepickerComponent, FormFieldComponent, ListComponent, ListItemComponent, ReactiveFormsModule, SwitcherComponent],
+  imports: [ButtonDirective, CalendarComponent, ListComponent, ListItemComponent, ReactiveFormsModule, SwitcherComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(document:click)': 'closeOutside($event)', '(keydown.escape)': 'open.set(null)' },
   template: `
@@ -34,15 +34,13 @@ const DIRECTIONS: { value: DirectionFilter; label: string; hint: string }[] = [
             <div class="pop" [class]="'pop pop--' + s.id" [id]="'pop-' + s.id" role="dialog" [attr.aria-label]="s.label">
               @switch (s.id) {
                 @case ('datum') {
-                  <ndw-form-field label="Datum">
-                    <ndw-datepicker [formControl]="calendarControl" [minDate]="minDate" [maxDate]="maxDate" [dateEnabledFilter]="hasData" placeholder="Kies een datum"></ndw-datepicker>
-                  </ndw-form-field>
+                  <ndw-calendar [formControl]="rangeControl" mode="range" [minDate]="minDate" [maxDate]="maxDate" [dateEnabledFilter]="hasData"></ndw-calendar>
                   <div class="chips">
-                    <button ndwButton secondary large type="button" (click)="shiftDay(-1)">Vorige dag</button>
-                    <button ndwButton secondary large type="button" (click)="shiftDay(1)">Volgende dag</button>
-                    <button ndwButton secondary large type="button" (click)="pickDate(dataEnd)">Laatste dag met data</button>
+                    <button ndwButton secondary large type="button" (click)="shiftDay(-1)">Vorige periode</button>
+                    <button ndwButton secondary large type="button" (click)="shiftDay(1)">Volgende periode</button>
+                    <button ndwButton secondary large type="button" (click)="pickSingleDay(dataEnd)">Laatste dag met data</button>
                   </div>
-                  <p class="hint">Demodata van {{ label(dataStart) }} t/m {{ label(dataEnd) }}. Dagen buiten deze periode zijn niet te kiezen.</p>
+                  <p class="hint">Demodata van {{ label(dataStart) }} t/m {{ label(dataEnd) }}.</p>
                 }
                 @case ('tijd') {
                   <ndw-switcher class="toggle" [options]="hourModes" [selectedValue]="hourMode()" (selectionChange)="setMode($any($event))"></ndw-switcher>
@@ -148,7 +146,7 @@ const DIRECTIONS: { value: DirectionFilter; label: string; hint: string }[] = [
       box-shadow: var(--ndw-elevation-popover);
     }
     .pop--datum {
-      width: 24rem;
+      width: auto;
       max-width: calc(100vw - 2rem);
     }
     .pop--tijd {
@@ -159,7 +157,6 @@ const DIRECTIONS: { value: DirectionFilter; label: string; hint: string }[] = [
       padding: var(--ndw-spacing-2xs);
     }
 
-    /* Kalender van het ontwerpsysteem */
     .chips {
       display: flex;
       flex-wrap: wrap;
@@ -210,6 +207,7 @@ const DIRECTIONS: { value: DirectionFilter; label: string; hint: string }[] = [
 })
 export class FietsFilterbarComponent {
   readonly date = model.required<string>();
+  readonly date1 = model<string>();
   readonly hour0 = model.required<number>();
   readonly hour1 = model.required<number>();
   readonly hourMode = model.required<'uur' | 'reeks'>();
@@ -224,7 +222,7 @@ export class FietsFilterbarComponent {
   protected readonly minDate = toDate(DATA_START);
   protected readonly maxDate = toDate(DATA_END);
   protected readonly hasData = (d: Date | null) => !!d && toIso(d) >= DATA_START && toIso(d) <= DATA_END;
-  protected readonly calendarControl = new FormControl<Date | null>(null);
+  protected readonly rangeControl = new FormControl<Date[] | null>(null);
   protected readonly hoursList = Array.from({ length: 24 }, (_, h) => h);
   protected readonly dataStart = DATA_START;
   protected readonly dataEnd = DATA_END;
@@ -233,16 +231,26 @@ export class FietsFilterbarComponent {
   protected readonly label = dateLabel;
 
   protected readonly segments = computed(() => [
-    { id: 'datum' as Panel, label: 'Datum', value: dateLabel(this.date()) },
+    { id: 'datum' as Panel, label: 'Periode', value: dateRangeLabel(this.date(), this.date1() ?? this.date()) },
     { id: 'tijd' as Panel, label: 'Tijd', value: rangeLabel(this.hour0(), this.hour1()) },
     { id: 'richting' as Panel, label: 'Richting', value: DIRECTIONS.find((d) => d.value === this.direction())?.label ?? '' },
   ]);
 
   constructor() {
-    this.calendarControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((d) => {
-      if (d && toIso(d) !== this.date()) this.pickDate(toIso(d));
+    this.rangeControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((dates) => {
+      if (!dates || dates.length < 2) return; // wacht op start én einddatum
+      const iso0 = toIso(dates[0]);
+      const iso1 = toIso(dates[dates.length - 1]);
+      if (iso0 === this.date() && iso1 === (this.date1() ?? this.date())) return;
+      this.date.set(iso0);
+      this.date1.set(iso1);
+      this.open.set(null);
     });
-    effect(() => this.calendarControl.setValue(toDate(this.date()), { emitEvent: false }));
+    effect(() => {
+      const d0 = this.date();
+      const d1 = this.date1() ?? d0;
+      this.rangeControl.setValue([toDate(d0), toDate(d1)], { emitEvent: false });
+    });
   }
 
   protected toggle(panel: Panel) {
@@ -259,14 +267,27 @@ export class FietsFilterbarComponent {
 
   protected pickDate(iso: string) {
     this.date.set(iso);
+    if (iso > (this.date1() ?? iso)) this.date1.set(iso);
+  }
+
+  protected pickSingleDay(iso: string) {
+    this.date.set(iso);
+    this.date1.set(iso);
     this.open.set(null);
   }
 
   protected shiftDay(days: number) {
-    const d = new Date(`${this.date()}T12:00:00Z`);
-    d.setUTCDate(d.getUTCDate() + days);
-    const iso = d.toISOString().slice(0, 10);
-    if (iso >= DATA_START && iso <= DATA_END) this.date.set(iso);
+    const d1cur = this.date1() ?? this.date();
+    const span = Math.round((new Date(`${d1cur}T12:00:00Z`).getTime() - new Date(`${this.date()}T12:00:00Z`).getTime()) / 86400000);
+    const d0 = new Date(`${this.date()}T12:00:00Z`);
+    d0.setUTCDate(d0.getUTCDate() + days);
+    const iso0 = d0.toISOString().slice(0, 10);
+    if (iso0 < DATA_START || iso0 > DATA_END) return;
+    const d1 = new Date(`${iso0}T12:00:00Z`);
+    d1.setUTCDate(d1.getUTCDate() + span);
+    const iso1 = d1.toISOString().slice(0, 10);
+    this.date.set(iso0);
+    this.date1.set(iso1 <= DATA_END ? iso1 : DATA_END);
   }
 
   protected setMode(mode: 'uur' | 'reeks') {

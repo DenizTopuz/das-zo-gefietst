@@ -26,6 +26,12 @@ export interface RoadProps {
   functionalRoadClass?: string;
 }
 
+export function dateRangeLabel(date0: string, date1: string): string {
+  if (date0 === date1) return dateLabel(date0);
+  const fmt = new Intl.DateTimeFormat('nl-NL', { day: 'numeric', month: 'short' });
+  return `${fmt.format(new Date(`${date0}T12:00:00Z`))} – ${fmt.format(new Date(`${date1}T12:00:00Z`))}`;
+}
+
 export const TYPE_LABELS: Record<RoadType, string> = {
   forens: 'Forensenroute',
   stad: 'Stedelijk fietspad',
@@ -191,6 +197,53 @@ export function summarize(seg: Segment, date: string, h0: number, h1: number, di
     parts.push({ n: counts[h], v: speeds[h] });
   }
   return { available: true, total, avgSpeed: harmonic(parts) };
+}
+
+/** Gemiddelde uurreeks over een datumbereik (date0 t/m date1); bij één dag identiek aan hourly(). */
+export function hourlySeries(seg: Segment, date0: string, date1: string, direction: DirectionFilter = 'beide'): HourlySeries | null {
+  if (!seg.hasData) return null;
+  if (date0 === date1) return dataAvailable(seg, date0) ? hourly(seg, date0, direction) : null;
+  const countsByHour: number[][] = Array.from({ length: 24 }, () => []);
+  const speedParts: { n: number; v: number | null }[][] = Array.from({ length: 24 }, () => []);
+  let cur = new Date(`${date0}T12:00:00Z`);
+  const end = new Date(`${date1}T12:00:00Z`);
+  while (cur <= end) {
+    const dateStr = cur.toISOString().slice(0, 10);
+    if (dataAvailable(seg, dateStr)) {
+      const { counts, speeds } = hourly(seg, dateStr, direction);
+      for (let h = 0; h < 24; h++) {
+        countsByHour[h].push(counts[h]);
+        speedParts[h].push({ n: counts[h], v: speeds[h] });
+      }
+    }
+    cur.setUTCDate(cur.getUTCDate() + 1);
+  }
+  if (!countsByHour[0].length) return null;
+  return {
+    counts: countsByHour.map((vals) => Math.round(vals.reduce((s, v) => s + v, 0) / vals.length)),
+    speeds: speedParts.map((parts) => harmonic(parts)),
+  };
+}
+
+/** Totaal fietsers en harmonisch gemiddelde snelheid over een datumbereik. */
+export function summarizeRange(seg: Segment, date0: string, date1: string, h0: number, h1: number, direction: DirectionFilter = 'beide'): Summary {
+  if (!seg.hasData) return { available: false, total: 0, avgSpeed: null };
+  const parts: { n: number; v: number | null }[] = [];
+  let total = 0;
+  let cur = new Date(`${date0}T12:00:00Z`);
+  const end = new Date(`${date1}T12:00:00Z`);
+  while (cur <= end) {
+    const dateStr = cur.toISOString().slice(0, 10);
+    if (dataAvailable(seg, dateStr)) {
+      const { counts, speeds } = hourly(seg, dateStr, direction);
+      for (let h = h0; h <= h1; h++) {
+        total += counts[h];
+        parts.push({ n: counts[h], v: speeds[h] });
+      }
+    }
+    cur.setUTCDate(cur.getUTCDate() + 1);
+  }
+  return { available: parts.length > 0, total, avgSpeed: harmonic(parts) };
 }
 
 // ---------------------------------------------------------------- Kleuren

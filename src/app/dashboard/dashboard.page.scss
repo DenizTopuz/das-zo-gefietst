@@ -153,7 +153,6 @@
 }
 
 .meta,
-.period,
 .kpi__label,
 .note {
   color: var(--muted);
@@ -161,16 +160,27 @@
 
 .period {
   display: flex;
-  align-items: center;
-  gap: var(--ndw-spacing-xs);
-  padding: var(--ndw-spacing-xs) var(--ndw-spacing-sm) var(--ndw-spacing-xs) 0;
-  color: var(--ink);
+  flex-wrap: wrap;
+  gap: var(--ndw-spacing-2xs);
+  padding: var(--ndw-spacing-2xs) var(--ndw-spacing-sm) var(--ndw-spacing-xs) 0;
   background: var(--ndw-color-grey-50);
-  border-radius: 0;
+}
+
+.pchip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px var(--ndw-spacing-xs);
+  background: var(--ndw-color-white);
+  border: var(--ndw-border-size-sm) solid var(--ndw-color-grey-200);
+  border-radius: var(--ndw-border-radius-lg);
+  font-size: 0.75rem;
+  font-weight: var(--ndw-font-weight-bold);
+  color: var(--ndw-color-grey-700);
+  white-space: nowrap;
 
   ndw-icon {
-    flex: none;
-    color: var(--muted);
+    color: var(--accent);
   }
 }
 
@@ -428,6 +438,10 @@
   &__band {
     fill: var(--accent-soft);
     opacity: 0.7;
+
+    &--preview {
+      opacity: 0.35;
+    }
   }
 
   &__bar {
@@ -439,7 +453,11 @@
     }
 
     &:hover {
-      fill: var(--ndw-color-grey-400);
+      fill: var(--accent-soft);
+    }
+
+    &--on:hover {
+      fill: var(--accent);
     }
   }
 
@@ -456,6 +474,16 @@
     cursor: pointer;
 
     &--on {
+      fill: var(--accent);
+      stroke: var(--accent);
+    }
+
+    &:hover {
+      stroke: var(--accent);
+      fill: var(--accent-soft);
+    }
+
+    &--on:hover {
       fill: var(--accent);
       stroke: var(--accent);
     }

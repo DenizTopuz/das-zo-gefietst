@@ -11,8 +11,10 @@ import {
   DirectionFilter,
   dataAvailable,
   dateLabel,
+  dateRangeLabel,
   hourLabel,
   hourly,
+  hourlySeries,
   neutralColors,
   nl,
   rangeLabel,
@@ -21,6 +23,7 @@ import {
   Segment,
   segmentFromRoad,
   summarize,
+  summarizeRange,
   TYPE_LABELS,
 } from './fiets-data';
 import { FietsFilterbarComponent } from './fiets-filterbar.component';
@@ -54,6 +57,7 @@ export class DashboardPage {
   protected readonly ramp = this.#ramp;
 
   protected readonly date = signal('2026-10-27');
+  protected readonly date1 = signal('2026-10-27');
   protected readonly hour0 = signal(8);
   protected readonly hour1 = signal(8);
   protected readonly hourMode = signal<'uur' | 'reeks'>('uur');
@@ -79,6 +83,8 @@ export class DashboardPage {
   protected readonly hover = signal<MapHover | null>(null);
   /** Eerste klik van een reeks in een grafiek; de tweede klik sluit de reeks. */
   readonly #anchor = signal<number | null>(null);
+  /** Uur waarover de muis zweeft, voor hover-preview in de grafieken. */
+  protected readonly hoveredHour = signal<number | null>(null);
 
   constructor() {
     document.body.classList.add('fiets-active');
@@ -119,23 +125,35 @@ export class DashboardPage {
   // ------------------------------------------------------------------ afgeleide waarden
 
   protected readonly nHours = computed(() => this.hour1() - this.hour0() + 1);
+  protected readonly nDays = computed(() => Math.round((new Date(`${this.date1()}T12:00:00Z`).getTime() - new Date(`${this.date()}T12:00:00Z`).getTime()) / 86400000) + 1);
   protected readonly selection = computed(() => rangeLabel(this.hour0(), this.hour1()));
-  protected readonly dateText = computed(() => dateLabel(this.date()));
+  protected readonly dateText = computed(() => dateRangeLabel(this.date(), this.date1()));
   protected readonly directionLabel = computed(() => ({ beide: 'Beide richtingen', a: 'Richting A (heen)', b: 'Richting B (terug)' })[this.direction()]);
   protected readonly direction = signal<DirectionFilter>('beide');
   protected readonly summary = computed(() => {
     const seg = this.segment();
-    return seg ? summarize(seg, this.date(), this.hour0(), this.hour1(), this.direction()) : null;
+    return seg ? summarizeRange(seg, this.date(), this.date1(), this.hour0(), this.hour1(), this.direction()) : null;
+  });
+  protected readonly kpiSub = computed(() => {
+    const sum = this.summary();
+    if (!sum?.available) return '';
+    const nd = this.nDays();
+    const nh = this.nHours();
+    if (nd > 1 && nh > 1) return `gem. ${nl(Math.round(sum.total / (nd * nh)))} per uur per dag`;
+    if (nd > 1) return `gem. ${nl(Math.round(sum.total / nd))} per dag`;
+    if (nh > 1) return `gemiddeld ${nl(Math.round(sum.total / nh))} per uur`;
+    return 'in dit uur';
   });
   /** Verdeling over de twee richtingen in de gekozen uren, altijd beide zichtbaar. */
   protected readonly split = computed(() => {
     const seg = this.segment();
     if (!seg) return null;
-    return { a: summarize(seg, this.date(), this.hour0(), this.hour1(), 'a'), b: summarize(seg, this.date(), this.hour0(), this.hour1(), 'b') };
+    return { a: summarizeRange(seg, this.date(), this.date1(), this.hour0(), this.hour1(), 'a'), b: summarizeRange(seg, this.date(), this.date1(), this.hour0(), this.hour1(), 'b') };
   });
   protected readonly series = computed(() => {
     const seg = this.segment();
-    return seg && dataAvailable(seg, this.date()) ? hourly(seg, this.date(), this.direction()) : null;
+    if (!seg) return null;
+    return hourlySeries(seg, this.date(), this.date1(), this.direction());
   });
 
   protected readonly status = computed<Status>(() => {
@@ -149,7 +167,8 @@ export class DashboardPage {
   protected readonly noDataText = computed(() => {
     const seg = this.segment();
     if (seg && !seg.hasData) return 'Voor dit wegvak ontbreken meetgegevens (demo: sensor niet beschikbaar).';
-    return `Geen data voor ${this.dateText()}. Demodata is beschikbaar van ${dateLabel(DATA_START)} t/m ${dateLabel(DATA_END)}.`;
+    if (this.date() === this.date1()) return `Geen data voor ${this.dateText()}. Demodata is beschikbaar van ${dateLabel(DATA_START)} t/m ${dateLabel(DATA_END)}.`;
+    return `Geen data voor deze periode. Demodata is beschikbaar van ${dateLabel(DATA_START)} t/m ${dateLabel(DATA_END)}.`;
   });
 
   protected readonly legendGroups = computed<MapLegendOptionGroup[]>(() => {
@@ -179,6 +198,22 @@ export class DashboardPage {
     return h >= this.hour0() && h <= this.hour1();
   }
 
+  protected hoverHour(h: number | null) {
+    this.hoveredHour.set(h);
+  }
+
+  protected readonly hoverBand = computed(() => {
+    const h = this.hoveredHour();
+    if (h === null) return { x: 0, width: 0 };
+    const anchor = this.#anchor();
+    if (this.hourMode() === 'reeks' && anchor !== null) {
+      const lo = Math.min(anchor, h);
+      const hi = Math.max(anchor, h);
+      return { x: lo * 12, width: (hi - lo + 1) * 12 };
+    }
+    return { x: h * 12, width: 12 };
+  });
+
   protected readonly intensityChart = computed(() => {
     const s = this.series();
     if (!s) return null;
@@ -189,7 +224,8 @@ export class DashboardPage {
 
   protected readonly weekdayChart = computed(() => {
     const seg = this.segment();
-    if (!seg || !dataAvailable(seg, this.date())) return null;
+    const date0 = this.date();
+    if (!seg || !dataAvailable(seg, date0)) return null;
     const dir = this.direction();
     const totals: number[][] = Array.from({ length: 7 }, () => []);
     const cur = new Date(`${DATA_START}T12:00:00Z`);
@@ -202,7 +238,10 @@ export class DashboardPage {
     }
     const DOW_ORDER = [1, 2, 3, 4, 5, 6, 0];
     const DOW_LABELS = ['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'];
-    const todayDow = new Date(`${this.date()}T12:00:00Z`).getUTCDay();
+    const selectedDows = new Set<number>();
+    let rc = new Date(`${date0}T12:00:00Z`);
+    const rend = new Date(`${this.date1()}T12:00:00Z`);
+    while (rc <= rend) { selectedDows.add(rc.getUTCDay()); rc.setUTCDate(rc.getUTCDate() + 1); }
     const slotW = 288 / 7;
     const barW = 28;
     const avgs = DOW_ORDER.map((dow) => {
@@ -219,7 +258,7 @@ export class DashboardPage {
         cx: (i + 0.5) * slotW,
         y: 84 - (avg / top) * 76,
         height: (avg / top) * 76,
-        isToday: DOW_ORDER[i] === todayDow,
+        isToday: selectedDows.has(DOW_ORDER[i]),
       })),
     };
   });

@@ -21,7 +21,7 @@
             }
           </ndw-autosuggest>
         </div>
-        <app-fiets-filterbar [(date)]="date" [(hour0)]="hour0" [(hour1)]="hour1" [(hourMode)]="hourMode" [(direction)]="direction" />
+        <app-fiets-filterbar [(date)]="date" [(date1)]="date1" [(hour0)]="hour0" [(hour1)]="hour1" [(hourMode)]="hourMode" [(direction)]="direction" />
         <ndw-pill class="demodata" color="yellow" title="Alle gegevens op deze pagina zijn fictief">Demodata</ndw-pill>
       </div>
       <div class="tour-anchor" aria-hidden="true"></div>
@@ -76,10 +76,11 @@
         <button ndwButton tertiary type="button" class="panel__close" aria-label="Selectie wissen" title="Selectie wissen" (click)="clearSelection()"><ndw-icon>close</ndw-icon></button>
       </header>
 
-      <p class="period ndw-paragraph-md">
-        <ndw-icon>schedule</ndw-icon>
-        <span>{{ dateText() }} · {{ selection() }} · {{ directionLabel() }}</span>
-      </p>
+      <div class="period">
+        <span class="pchip"><ndw-icon size="sm">calendar_today</ndw-icon>{{ dateText() }}</span>
+        <span class="pchip"><ndw-icon size="sm">schedule</ndw-icon>{{ selection() }}</span>
+        <span class="pchip"><ndw-icon size="sm">swap_vert</ndw-icon>{{ directionLabel() }}</span>
+      </div>
 
       @if (status() === 'geen-data') {
         <ndw-alert type="info-grey">
@@ -100,9 +101,9 @@
 
         <div class="kpis">
           <div class="kpi">
-            <p class="kpi__label ndw-paragraph-sm">Fietsers{{ nHours() > 1 ? ' in totaal' : '' }}</p>
+            <p class="kpi__label ndw-paragraph-sm">Fietsers{{ nDays() > 1 || nHours() > 1 ? ' in totaal' : '' }}</p>
             <p class="kpi__value">{{ nl(summary()!.total) }}</p>
-            <p class="kpi__sub ndw-paragraph-sm">{{ nHours() > 1 ? 'gemiddeld ' + nl(summary()!.total / nHours()) + ' per uur' : 'in dit uur' }}</p>
+            <p class="kpi__sub ndw-paragraph-sm">{{ kpiSub() }}</p>
           </div>
           <div class="kpi">
             <p class="kpi__label ndw-paragraph-sm">Snelheid</p>
@@ -148,12 +149,13 @@
               <p class="note ndw-paragraph-sm">Klik op een staaf om het uur te kiezen{{ hourMode() === 'reeks' ? '; klik op twee uren voor een reeks' : '' }}.</p>
             </div>
             <svg class="chart" viewBox="0 0 288 108" role="img" [attr.aria-label]="'Fietsers per uur op ' + dateText()">
+              <rect class="chart__band chart__band--preview" [attr.x]="hoverBand().x" y="0" [attr.width]="hoverBand().width" height="84" />
               <rect class="chart__band" [attr.x]="selectionBand().x" y="0" [attr.width]="selectionBand().width" height="84" />
               <line class="chart__grid" x1="0" y1="8" x2="288" y2="8" />
               <line class="chart__grid" x1="0" y1="46" x2="288" y2="46" />
               <text class="chart__label" x="0" y="4">{{ nl(ic.top) }}</text>
               @for (b of ic.bars; track b.h) {
-                <path class="chart__bar" [class.chart__bar--on]="inSelection(b.h)" [attr.d]="barPath(b)" (click)="pickHour(b.h, $event)"><title>{{ hourLabel(b.h) }} · {{ nl(b.count) }} fietsers</title></path>
+                <path class="chart__bar" [class.chart__bar--on]="inSelection(b.h)" [attr.d]="barPath(b)" (click)="pickHour(b.h, $event)" (mouseenter)="hoverHour(b.h)" (mouseleave)="hoverHour(null)"><title>{{ hourLabel(b.h) }} · {{ nl(b.count) }} fietsers</title></path>
               }
               <line class="chart__axis" x1="0" y1="84" x2="288" y2="84" />
               @for (h of [0, 6, 12, 18, 23]; track h) {
@@ -167,14 +169,15 @@
           <section class="card" aria-labelledby="spd-title">
             <h3 id="spd-title" class="ndw-heading-xs">Gemiddelde snelheid per uur</h3>
             <svg class="chart" viewBox="0 0 288 108" role="img" [attr.aria-label]="'Gemiddelde snelheid per uur op ' + dateText()">
+              <rect class="chart__band chart__band--preview" [attr.x]="hoverBand().x" y="0" [attr.width]="hoverBand().width" height="84" />
               <rect class="chart__band" [attr.x]="selectionBand().x" y="0" [attr.width]="selectionBand().width" height="84" />
               <line class="chart__grid" x1="0" y1="8" x2="288" y2="8" />
               <line class="chart__grid" x1="0" y1="46" x2="288" y2="46" />
               <text class="chart__label" x="0" y="4">{{ speedAxis[1] }} km/u</text>
-              <text class="chart__label" x="0" y="96">{{ speedAxis[0] }}</text>
+              <text class="chart__label" x="0" y="78">{{ speedAxis[0] }} km/u</text>
               <path class="chart__line" [attr.d]="sc.path" />
               @for (p of sc.points; track p.h) {
-                <circle class="chart__dot" [class.chart__dot--on]="inSelection(p.h)" [attr.cx]="p.x" [attr.cy]="p.y" r="3" (click)="pickHour(p.h, $event)"><title>{{ hourLabel(p.h) }} · {{ nl(p.v, 1) }} km/u</title></circle>
+                <circle class="chart__dot" [class.chart__dot--on]="inSelection(p.h)" [attr.cx]="p.x" [attr.cy]="p.y" r="3" (click)="pickHour(p.h, $event)" (mouseenter)="hoverHour(p.h)" (mouseleave)="hoverHour(null)"><title>{{ hourLabel(p.h) }} · {{ nl(p.v, 1) }} km/u</title></circle>
               }
               <line class="chart__axis" x1="0" y1="84" x2="288" y2="84" />
               @for (h of [0, 6, 12, 18, 23]; track h) {
