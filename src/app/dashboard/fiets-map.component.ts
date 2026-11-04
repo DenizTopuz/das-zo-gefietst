@@ -80,6 +80,12 @@ export class FietsMapComponent extends MapComponent {
   readonly #styleReady = signal(false);
   #observer?: ResizeObserver;
   #positioned = false;
+  #hoverInterval: ReturnType<typeof setInterval> | null = null;
+  #dashStep = 0;
+  readonly #dashSeq = [
+    [0, 4, 3], [0.5, 4, 2.5], [1, 4, 2],
+    [1.5, 4, 1.5], [2, 4, 1], [2.5, 4, 0.5], [3, 4, 0],
+  ];
 
   constructor() {
     super();
@@ -103,6 +109,7 @@ export class FietsMapComponent extends MapComponent {
   }
 
   override ngOnDestroy(): void {
+    this.#stopHoverAnim();
     this.#observer?.disconnect();
     super.ngOnDestroy();
   }
@@ -155,6 +162,43 @@ export class FietsMapComponent extends MapComponent {
     }, before);
     map.addLayer({ id: 'roads-hit', type: 'line', source: SOURCE, 'source-layer': SOURCE_LAYER, minzoom: 9, filter, layout: round, paint: { 'line-color': '#000000', 'line-opacity': 0, 'line-width': 20 } }, before);
 
+    // Pijlpictogram via canvas zodat het lettertype geen rol speelt
+    const dpr = window.devicePixelRatio || 1;
+    const sz = Math.round(24 * dpr);
+    const c = document.createElement('canvas');
+    c.width = sz; c.height = sz;
+    const ctx = c.getContext('2d')!;
+    ctx.scale(dpr, dpr);
+    ctx.strokeStyle = 'rgba(255,255,255,0.95)';
+    ctx.lineWidth = 3.5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(7, 5); ctx.lineTo(17, 12); ctx.lineTo(7, 19);
+    ctx.stroke();
+    map.addImage('fiets-arrow', ctx.getImageData(0, 0, sz, sz), { pixelRatio: dpr });
+
+    // Geselecteerd: vaste pijltjes richting A (NWB geometrierichting)
+    map.addLayer({
+      id: 'roads-arrows',
+      type: 'symbol',
+      source: SOURCE,
+      'source-layer': SOURCE_LAYER,
+      minzoom: 12,
+      filter: ['==', ['get', 'roadSectionId'], -1] as ExpressionSpecification,
+      layout: {
+        'symbol-placement': 'line',
+        'symbol-spacing': 50,
+        'icon-image': 'fiets-arrow',
+        'icon-size': ['interpolate', ['linear'], ['zoom'], 12, 0.6, 18, 1.2] as ExpressionSpecification,
+        'icon-keep-upright': false,
+        'icon-rotation-alignment': 'map',
+        'icon-allow-overlap': true,
+        'icon-ignore-placement': true,
+      },
+      paint: { 'icon-opacity': 0.9 },
+    }, before);
+
     map.on('click', 'roads-hit', (event) => {
       const props = event.features?.[0]?.properties as RoadProps | undefined;
       if (props?.roadSectionId) this.roadSelected.emit(props);
@@ -184,6 +228,15 @@ export class FietsMapComponent extends MapComponent {
     const filter: ExpressionSpecification = ['==', ['get', 'roadSectionId'], id];
     map.setFilter('roads-selected', filter);
     map.setFilter('roads-casing', filter);
+    if (map.getLayer('roads-arrows')) map.setFilter('roads-arrows', filter);
+  }
+
+  #stopHoverAnim() {
+    if (this.#hoverInterval !== null) {
+      clearInterval(this.#hoverInterval);
+      this.#hoverInterval = null;
+    }
+    this.#dashStep = 0;
   }
 
   /** Wacht tot de kaart na een beweging klaar is met laden. */
