@@ -183,6 +183,23 @@
             </svg>
           </section>
         }
+
+        @if (weekdayChart(); as wc) {
+          <section class="card" aria-labelledby="dow-title">
+            <h3 id="dow-title" class="ndw-heading-xs">Gemiddelde per weekdag</h3>
+            <svg class="chart" viewBox="0 0 288 108" role="img" aria-label="Gemiddeld aantal fietsers per weekdag">
+              <line class="chart__grid" x1="0" y1="8" x2="288" y2="8" />
+              <text class="chart__label" x="0" y="4">{{ nl(wc.top) }}</text>
+              @for (b of wc.bars; track b.label) {
+                <path class="chart__bar" [class.chart__bar--on]="b.isToday" [attr.d]="barPath(b, 28)"><title>{{ b.label }} · gem. {{ nl(b.count) }} fietsers/dag</title></path>
+              }
+              <line class="chart__axis" x1="0" y1="84" x2="288" y2="84" />
+              @for (b of wc.bars; track b.label) {
+                <text class="chart__label" [attr.x]="b.cx" y="102" text-anchor="middle">{{ b.label }}</text>
+              }
+            </svg>
+          </section>
+        }
       }
   </aside>
   }

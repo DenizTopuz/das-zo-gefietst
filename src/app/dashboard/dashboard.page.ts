@@ -187,6 +187,43 @@ export class DashboardPage {
     return { top, bars: s.counts.map((count, h) => ({ h, count, x: h * 12 + 2, y: 84 - (count / top) * 76, height: (count / top) * 76 })) };
   });
 
+  protected readonly weekdayChart = computed(() => {
+    const seg = this.segment();
+    if (!seg || !dataAvailable(seg, this.date())) return null;
+    const dir = this.direction();
+    const totals: number[][] = Array.from({ length: 7 }, () => []);
+    const cur = new Date(`${DATA_START}T12:00:00Z`);
+    const end = new Date(`${DATA_END}T12:00:00Z`);
+    while (cur <= end) {
+      const dateStr = cur.toISOString().slice(0, 10);
+      const series = hourly(seg, dateStr, dir);
+      totals[cur.getUTCDay()].push(series.counts.reduce((s, c) => s + c, 0));
+      cur.setUTCDate(cur.getUTCDate() + 1);
+    }
+    const DOW_ORDER = [1, 2, 3, 4, 5, 6, 0];
+    const DOW_LABELS = ['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'];
+    const todayDow = new Date(`${this.date()}T12:00:00Z`).getUTCDay();
+    const slotW = 288 / 7;
+    const barW = 28;
+    const avgs = DOW_ORDER.map((dow) => {
+      const vals = totals[dow];
+      return vals.length ? Math.round(vals.reduce((s, v) => s + v, 0) / vals.length) : 0;
+    });
+    const top = niceMax(Math.max(...avgs, 1));
+    return {
+      top,
+      bars: avgs.map((avg, i) => ({
+        label: DOW_LABELS[i],
+        count: avg,
+        x: i * slotW + (slotW - barW) / 2,
+        cx: (i + 0.5) * slotW,
+        y: 84 - (avg / top) * 76,
+        height: (avg / top) * 76,
+        isToday: DOW_ORDER[i] === todayDow,
+      })),
+    };
+  });
+
   protected readonly speedChart = computed(() => {
     const s = this.series();
     if (!s) return null;
@@ -205,8 +242,7 @@ export class DashboardPage {
   });
 
   /** Staaf met een halfronde bovenkant (straal = halve breedte). */
-  protected barPath(b: { x: number; y: number; height: number }): string {
-    const w = 8;
+  protected barPath(b: { x: number; y: number; height: number }, w = 8): string {
     const r = Math.min(w / 2, b.height);
     if (b.height <= 0) return '';
     const bottom = b.y + b.height;
