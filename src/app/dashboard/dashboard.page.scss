@@ -426,7 +426,7 @@
   }
 
   &__bar {
-    fill: var(--ndw-color-grey-400);
+    fill: var(--ndw-color-grey-200);
     cursor: pointer;
 
     &--on {
@@ -434,7 +434,7 @@
     }
 
     &:hover {
-      fill: var(--ndw-color-grey-600);
+      fill: var(--ndw-color-grey-400);
     }
   }
 

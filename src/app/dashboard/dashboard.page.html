@@ -151,11 +151,11 @@
               <rect class="chart__band" [attr.x]="selectionBand().x" y="0" [attr.width]="selectionBand().width" height="84" />
               <line class="chart__grid" x1="0" y1="8" x2="288" y2="8" />
               <line class="chart__grid" x1="0" y1="46" x2="288" y2="46" />
-              <line class="chart__axis" x1="0" y1="84" x2="288" y2="84" />
               <text class="chart__label" x="0" y="4">{{ nl(ic.top) }}</text>
               @for (b of ic.bars; track b.h) {
                 <path class="chart__bar" [class.chart__bar--on]="inSelection(b.h)" [attr.d]="barPath(b)" (click)="pickHour(b.h, $event)"><title>{{ hourLabel(b.h) }} · {{ nl(b.count) }} fietsers</title></path>
               }
+              <line class="chart__axis" x1="0" y1="84" x2="288" y2="84" />
               @for (h of [0, 6, 12, 18, 23]; track h) {
                 <text class="chart__label" [attr.x]="h * 12 + 6" y="102" text-anchor="middle">{{ hourLabel(h).slice(0, 2) }}</text>
               }
@@ -170,13 +170,13 @@
               <rect class="chart__band" [attr.x]="selectionBand().x" y="0" [attr.width]="selectionBand().width" height="84" />
               <line class="chart__grid" x1="0" y1="8" x2="288" y2="8" />
               <line class="chart__grid" x1="0" y1="46" x2="288" y2="46" />
-              <line class="chart__axis" x1="0" y1="84" x2="288" y2="84" />
               <text class="chart__label" x="0" y="4">{{ speedAxis[1] }} km/u</text>
               <text class="chart__label" x="0" y="96">{{ speedAxis[0] }}</text>
               <path class="chart__line" [attr.d]="sc.path" />
               @for (p of sc.points; track p.h) {
                 <circle class="chart__dot" [class.chart__dot--on]="inSelection(p.h)" [attr.cx]="p.x" [attr.cy]="p.y" r="3" (click)="pickHour(p.h, $event)"><title>{{ hourLabel(p.h) }} · {{ nl(p.v, 1) }} km/u</title></circle>
               }
+              <line class="chart__axis" x1="0" y1="84" x2="288" y2="84" />
               @for (h of [0, 6, 12, 18, 23]; track h) {
                 <text class="chart__label" [attr.x]="h * 12 + 6" y="102" text-anchor="middle">{{ hourLabel(h).slice(0, 2) }}</text>
               }
